@@ -1,23 +1,29 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // ← Thêm dòng này
+import { FormsModule } from '@angular/forms'; 
 import { ButtonModule } from 'primeng/button';
 import { TopbarComponent } from './shared/components/topbar/topbar.component';
 import { CommonModule } from '@angular/common'; 
 import { InputGroupModule } from 'primeng/inputgroup'; 
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabel } from 'primeng/floatlabel';
+import { ToastModule } from 'primeng/toast';
+import { NotificationService } from './core/services/notification.service';
+import { MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
+import { ApiService } from './core/services/api.service';
+import { Endpoints, Methods } from './enums/api';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet, ButtonModule, TopbarComponent, InputGroupModule, InputTextModule, FloatLabel ],
+  imports: [CommonModule, FormsModule, RouterOutlet, ButtonModule, TopbarComponent, InputGroupModule, InputTextModule, FloatLabel, ToastModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'ohsheet-frontend';
-
+  
   // Play guide
   playGuideVisible = true;
 
@@ -43,6 +49,12 @@ export class AppComponent {
 
   // Email input
   emailInput: string | undefined;
+
+  constructor(
+    private notificationService: NotificationService,
+    private apiSerice: ApiService
+  ) {
+  }
 
   scrollToSection(sectionId: string) {
     const target = document.getElementById(sectionId);

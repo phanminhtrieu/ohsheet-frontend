@@ -8,27 +8,27 @@
     <!-- Play Guide -->
     <div class="" [class.pointer-events-none]="!playGuideVisible">
       <img
-        src="assets/imgs/started/click.svg"
+        src="/assets/imgs/started/click.svg"
         alt=""
         class="absolute w-[200px] right-[550px] top-[180px] transition-opacity duration-[1500ms] prevent-copy"
         [class.opacity-0]="!playGuideVisible"
       />
       <img
-        src="assets/imgs/started/play-button.svg"
+        src="/assets/imgs/started/play-button.svg"
         alt=""
         class="absolute animate-shakeY-continuous-slow top-[260px] w-[170px] hover:cursor-pointer transition-opacity duration-[1500ms] prevent-copy"
         (click)="showWelcomeBox()"
         [class.opacity-0]="!playGuideVisible"
       />
       <img
-        src="assets/imgs/started/shadow.svg"
+        src="/assets/imgs/started/shadow.svg"
         alt=""
         class="absolute w-[200px] left-[630px] bottom-[210px] hover:cursor-pointer hover:animate-shake transition-opacity duration-[1500ms] prevent-copy"
         (click)="scrollToSection('featureSection')"
         [class.opacity-0]="!playGuideVisible"
       />
       <img
-        src="assets/imgs/started/skip.svg"
+        src="/assets/imgs/started/skip.svg"
         alt=""
         class="absolute w-[100px] left-[600px] bottom-[100px] transition-opacity duration-[1500ms] prevent-copy"
         [class.opacity-0]="!playGuideVisible"
@@ -47,15 +47,26 @@
 
       <!-- Nội dung -->
       <div class="relative text-zinc-700">
-        <span class="text-3xl">Welcome to </span>
+        <span class="text-3xl font-semibold">Welcome to </span>
         <span class="text-4xl font-bold">OhSheet</span>
         <br /><br />
-        <span>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloremque
-          ipsa quis sed, fugiat culpa excepturi delectus perspiciatis. Sint
-          praesentium ut ullam culpa, repudiandae maiores iste fugit inventore
-          error. Laboriosam, enim?
-        </span>
+        <p class="font-semibold">
+          🍂 Cám ơn các bạn đã ghé thăm
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+        </p>
+        <p class="font-semibold">
+          🍂 Hiện tại tớ đang trong quá trình xây dựng, có lẽ sẽ mất thêm một
+          vài thời gian nữa để tung ra bản ra mắt đầu tiên.
+        </p>
+        <p class="font-semibold">
+          🍂 Nếu mọi người muốn nhận thông báo mới nhất từ
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+          thì hãy nhập email vào bên dưới.
+        </p>
       </div>
 
       <div class="flex mt-10 justify-center">
@@ -79,7 +90,7 @@
 
       <!-- Hover area -->
       <img
-        src="assets/icons/hover-area.svg"
+        src="/assets/icons/hover-area.svg"
         alt=""
         class="absolute animate-shake-continuous-slow opacity-0 right-[0px] top-[0px] w-[80px] prevent-copy transition-opacity duration-[3000ms]"
         [class.opacity-100]="pointerWelcomeBoxVisible"
@@ -93,29 +104,29 @@
       [class.opacity-100]="leftBackgroundVisible"
     >
       <img
-        src="assets/icons/treble-clef-dark.svg"
+        src="/assets/icons/treble-clef-dark.svg"
         alt=""
         class="absolute left-1 w-[150px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/bass-clef-dark.svg"
+        src="/assets/icons/bass-clef-dark.svg"
         alt=""
         class="absolute left-[420px] top-[300px] rotate-[140deg] w-[150px] prevent-copy z-50"
       />
 
       <!-- Bottom of background welcomebox -->
       <img
-        src="assets/icons/treble-clef-light.svg"
+        src="/assets/icons/treble-clef-light.svg"
         alt=""
         class="absolute bottom-7 left-[120px] w-[50px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/bass-clef-light.svg"
+        src="/assets/icons/bass-clef-light.svg"
         alt=""
         class="absolute bottom-10 left-[220px] w-[50px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/c-clef-light.svg"
+        src="/assets/icons/c-clef-light.svg"
         alt=""
         class="absolute bottom-7 left-[320px] w-[50px] prevent-copy z-50"
       />
@@ -135,12 +146,12 @@
       <div class="relative text-zinc-700">
         <span class="text-3xl font-semibold">Find your </span
         ><span class="text-5xl font-bold">Sheet</span>
-        <img src="assets/imgs/work-flow.svg" alt="" class="h-[250px]" />
+        <img src="/assets/imgs/work-flow.svg" alt="" class="h-[250px]" />
       </div>
 
       <!-- Hover area -->
       <img
-        src="assets/icons/hover-area.svg"
+        src="/assets/icons/hover-area.svg"
         alt=""
         class="absolute animate-shake-continuous-slow opacity-0 left-[0px] bottom-[0px] w-[80px] prevent-copy transition-opacity duration-[3000ms]"
         [class.opacity-100]="pointerGuideBoxVisible"
@@ -154,29 +165,29 @@
       [class.opacity-100]="rightBackgroundVisible"
     >
       <img
-        src="assets/icons/treble-clef-dark.svg"
+        src="/assets/icons/treble-clef-dark.svg"
         alt=""
         class="absolute right-1 w-[150px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/bass-clef-dark.svg"
+        src="/assets/icons/bass-clef-dark.svg"
         alt=""
         class="absolute right-[420px] top-[300px] rotate-[140deg] w-[150px] prevent-copy z-50"
       />
 
       <!-- Bottom of background welcomebox -->
       <img
-        src="assets/icons/treble-clef-light.svg"
+        src="/assets/icons/treble-clef-light.svg"
         alt=""
         class="absolute bottom-7 right-[120px] w-[50px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/bass-clef-light.svg"
+        src="/assets/icons/bass-clef-light.svg"
         alt=""
         class="absolute bottom-10 right-[220px] w-[50px] prevent-copy z-50"
       />
       <img
-        src="assets/icons/c-clef-light.svg"
+        src="/assets/icons/c-clef-light.svg"
         alt=""
         class="absolute bottom-7 right-[320px] w-[50px] prevent-copy z-50"
       />
@@ -184,7 +195,7 @@
 
     <!-- Arrow point to Welcome box -->
     <img
-      src="assets/icons/arrow_1.svg"
+      src="/assets/icons/arrow_1.svg"
       alt=""
       class="absolute animate-shake-continuous-slow opacity-0 left-[480px] top-[30px] w-[200px] rotate-6 prevent-copy transition-opacity duration-[3000ms]"
       [class.opacity-100]="pointerWelcomeBoxVisible"
@@ -192,7 +203,7 @@
     />
 
     <img
-      src="assets/texts/move-here.svg"
+      src="/assets/texts/move-here.svg"
       alt=""
       class="absolute animate-shake-continuous-slow opacity-0 left-[570px] top-[130px] w-[200px] rotate-6 prevent-copy transition-opacity duration-[3000ms]"
       [class.opacity-100]="pointerWelcomeBoxVisible"
@@ -201,7 +212,7 @@
 
     <!-- Arrow point to Guide box -->
     <img
-      src="assets/icons/arrow_3.svg"
+      src="/assets/icons/arrow_3.svg"
       alt=""
       class="absolute animate-shake-continuous-slow opacity-0 right-[500px] top-[500px] w-[200px] prevent-copy transition-opacity duration-[3000ms]"
       [class.opacity-100]="pointerGuideBoxVisible"
@@ -210,7 +221,7 @@
 
     <!-- Notice -->
     <img
-      src="assets/highlights/notice.svg"
+      src="/assets/highlights/notice.svg"
       alt=""
       class="absolute left-[840px] top-[270px] w-[75px] animate-shake-continuous opacity-0 transition-opacity duration-[3000ms]"
       [class.pointer-events-none]="!mainButtonVisible"
@@ -239,7 +250,7 @@
     <div class="relative group">
       <!-- Atomic icon -->
       <img
-        src="assets/feature-sections/input-atomic.svg"
+        src="/assets/feature-sections/input-atomic.svg"
         alt=""
         class="animate-shakeY-continuous-slow w-[650px] bottom-[130px] hover:cursor-pointer prevent-copy"
         (click)="toggleImgInputOption()"
@@ -247,21 +258,21 @@
 
       <!-- Arrow point to Atomic icon down-->
       <img
-        src="assets/arrows/arr-null-light.svg"
+        src="/assets/arrows/arr-null-light.svg"
         alt=""
         class="z-50 absolute left-[0px] top-[-20px] w-[100px]"
       />
 
       <!-- Text: Upload here-->
       <img
-        src="assets/texts/upload-here.svg"
+        src="/assets/texts/upload-here.svg"
         alt=""
         class="z-50 absolute left-[-150px] top-[40px] w-[200px] rotate-[20deg]"
       />
 
       <!-- Arrow point to Atomic icon up-->
       <img
-        src="assets/arrows/arr-null-light.svg"
+        src="/assets/arrows/arr-null-light.svg"
         alt=""
         class="z-50 absolute right-[0px] bottom-[-20px] w-[100px] rotate-[180deg]"
       />
@@ -275,7 +286,7 @@
         [class.-translate-x-[-450px]]="inputOptionsVisible"
       >
         <img
-          src="assets/feature-sections/starry-night-with-title.svg"
+          src="/assets/feature-sections/starry-night-with-title.svg"
           alt="Small1"
           class="w-full hover:cursor-pointer hover:animate-shake-continuous"
         />
@@ -290,7 +301,7 @@
         [class.-translate-x-[450px]]="inputOptionsVisible"
       >
         <img
-          src="assets/feature-sections/audio-wave-with-title.svg"
+          src="/assets/feature-sections/audio-wave-with-title.svg"
           alt="Small1"
           class="w-full hover:cursor-pointer hover:animate-shake-continuous"
         />
