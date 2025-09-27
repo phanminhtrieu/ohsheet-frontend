@@ -1,0 +1,16 @@
+<p-menubar
+  [model]="items"
+  styleClass="!bg-gray-50 text-white shadow-md fixed top-0 left-0 w-full z-50"
+>
+  <ng-template pTemplate="start">
+    <div class="flex items-center gap-2">
+      <img src="assets/logo.png" alt="Logo" class="h-8 w-8" />
+      <span class="text-lg font-bold">OhSheet</span>
+    </div>
+  </ng-template>
+
+  <div class="flex gap-4">
+    <p-button styleClass="!px-8" label="Sign In" />
+    <p-button styleClass="!px-8" label="Sign Up" severity="secondary" />
+  </div>
+</p-menubar>
