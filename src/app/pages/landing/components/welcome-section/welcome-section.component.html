@@ -43,8 +43,8 @@
     <!-- Background chính -->
     <div class="absolute inset-0 bg-stone-200 opacity-1"></div>
 
-    <!-- Nội dung -->
-    <div class="relative text-zinc-700">
+    <!-- Nội dung trước khi submit -->
+    <div class="relative text-zinc-700" *ngIf="!isSubmitted">
       <span class="text-3xl font-semibold">Welcome to </span>
       <span class="text-4xl font-bold">OhSheet</span>
       <br /><br />
@@ -67,22 +67,82 @@
       </p>
     </div>
 
-    <div class="flex mt-10 justify-center">
-      <p-floatlabel>
-        <input
-          pInputText
-          id="over_label"
-          [(ngModel)]="emailInput"
-          autocomplete="off"
-          class="!rounded-tr-none !rounded-br-none"
-        />
-        <label for="over_label">Email</label>
-      </p-floatlabel>
+    <!-- Submit area -->
+    <form [formGroup]="formEmail">
+      <div class="flex mt-10 justify-center" *ngIf="!isSubmitted">
+        <!-- <p-floatlabel>
+          <input
+            pInputText
+            id="over_label"
+            formControlName="email"
+            autocomplete="off"
+            class="!rounded-tr-none !rounded-br-none"
+          />
+          <label for="over_label">Email</label>
+        </p-floatlabel> -->
 
-      <p-button
-        id="btn-reach"
-        styleClass="!px-8 !rounded-tl-none !rounded-bl-none"
-        label="Subscribe"
+        <div class="flex flex-col w-full">
+          <p-floatlabel>
+            <input
+              pInputText
+              id="over_label"
+              formControlName="email"
+              autocomplete="off"
+              class="!rounded-tr-none !rounded-br-none w-full"
+            />
+            <label for="over_label">Email</label>
+          </p-floatlabel>
+
+          <ng-container
+            *ngIf="
+              formEmail.get('email')?.touched && formEmail.get('email')?.invalid
+            "
+          >
+            <small
+              class="p-error text-red-500 text-sm font-semibold mt-1"
+              *ngIf="formEmail.get('email')?.hasError('required')"
+            >
+              Bạn chưa nhập email 😭
+            </small>
+
+            <small
+              class="p-error text-red-500 text-sm font-semibold mt-1"
+              *ngIf="formEmail.get('email')?.hasError('email')"
+            >
+              Email không hợp lệ 🤔
+            </small>
+          </ng-container>
+        </div>
+
+        <p-button
+          id="btn-reach"
+          styleClass="!px-8 !rounded-tl-none !rounded-bl-none"
+          label="Subscribe"
+          (click)="showInputNameDialog()"
+        />
+      </div>
+    </form>
+
+    <!-- Nội dung sau khi submit -->
+    <div class="relative text-zinc-700" *ngIf="isSubmitted">
+      <span class="text-4xl font-bold">OhSheet !!!</span>
+      <span class="text-3xl font-semibold"></span>
+      <br /><br />
+      <p class="font-semibold text-xl">
+        Không thể ngờ rằng
+        <span class="text-2xl font-bold text-white bg-stone-500 px-1 rounded">{{
+          anonymousUser.name | slice : 0 : 10
+        }}</span>
+        đã trở thành một phần của chúng tớ 😲😲
+      </p>
+      <br />
+      <p class="font-semibold text-xl">
+        Khi nào có thông báo là tớ gửi thư cho cậu ngay nhé 🖊️😎
+      </p>
+      <img
+        src="/assets/welcome-sections/thank-you-after-submitted.svg"
+        alt=""
+        class="ml-[105px] w-[300px] pb-[10px]"
       />
     </div>
 
@@ -236,4 +296,59 @@
     [class.pointer-events-none]="!mainButtonVisible"
     [class.opacity-100]="mainButtonVisible"
   />
+
+  <!-- Dialog -->
+  <p-dialog
+    [modal]="true"
+    [(visible)]="inputNameDialogVisible"
+    [style]="{ width: '25rem' }"
+  >
+    <span class="text-2xl font-semibold block mb-8"
+      >Tôi có thể gọi bạn là ... ?</span
+    >
+
+    <form [formGroup]="formName">
+      <div class="flex items-center gap-4 mb-4">
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          class="flex-auto"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Thông báo lỗi -->
+      <small
+        class="p-error text-red-500 text-1xl font-semibold"
+        *ngIf="
+          formName.get('name')?.touched &&
+          formName.get('name')?.hasError('required')
+        "
+      >
+        Bạn hãy cho mình được biết tên bạn đi mà 😭
+      </small>
+
+      <div class="flex justify-end gap-2 mt-5">
+        <p-button
+          label="Cancel"
+          severity="secondary"
+          (click)="inputNameDialogVisible = false"
+        />
+        <p-button label="Save" (click)="subscribe()" />
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog
+    header="Bạn gì ơi!"
+    [(visible)]="warningDialogVisible"
+    [modal]="true"
+    [style]="{ width: '20rem' }"
+  >
+    <p>Bạn chưa nhập email hoặc email không hợp lệ nè trùi ui 😭</p>
+    <p-footer>
+      <p-button label="OK" (click)="warningDialogVisible = false"></p-button>
+    </p-footer>
+  </p-dialog>
 </div>
