@@ -48,39 +48,43 @@
       <span class="text-3xl font-semibold">Welcome to </span>
       <span class="text-4xl font-bold">OhSheet</span>
       <br /><br />
-      <p class="font-semibold">
-        🍂 Cám ơn các bạn đã ghé thăm
-        <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
-          >Oh Sheet</span
-        >
-      </p>
-      <p class="font-semibold">
-        🍂 Hiện tại tớ đang trong quá trình xây dựng, có lẽ sẽ mất thêm một vài
-        thời gian nữa để tung ra bản ra mắt đầu tiên.
-      </p>
-      <p class="font-semibold">
-        🍂 Nếu mọi người muốn nhận thông báo mới nhất từ
-        <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
-          >Oh Sheet</span
-        >
-        thì hãy nhập email vào bên dưới.
-      </p>
+      <div *ngIf="!isUserExist">
+        <p class="font-semibold">
+          🍂 Cám ơn các bạn đã ghé thăm
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+        </p>
+        <p class="font-semibold">
+          🍂 Hiện tại tớ đang trong quá trình xây dựng, có lẽ sẽ mất thêm một
+          vài thời gian nữa để tung ra bản ra mắt đầu tiên.
+        </p>
+        <p class="font-semibold">
+          🍂 Nếu mọi người muốn nhận thông báo mới nhất từ
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+          thì hãy nhập email vào bên dưới.
+        </p>
+      </div>
+
+      <div *ngIf="isUserExist">
+        <p class="font-semibold">Ôi trời ơi, bạn đã quay lại rồi à 🎉</p>
+        <p class="font-semibold">
+          Hiện tại tớ đang được nâng cấp dần lên để có thể gặp
+          <span
+            class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >{{ anonymousUser.name }}</span
+          >
+          nè 😎
+        </p>
+        <p class="font-semibold">Chúc bạn một ngày tốt lành nhé</p>
+      </div>
     </div>
 
     <!-- Submit area -->
-    <form [formGroup]="formEmail">
+    <form [formGroup]="formEmail" *ngIf="!isUserExist">
       <div class="flex mt-10 justify-center" *ngIf="!isSubmitted">
-        <!-- <p-floatlabel>
-          <input
-            pInputText
-            id="over_label"
-            formControlName="email"
-            autocomplete="off"
-            class="!rounded-tr-none !rounded-br-none"
-          />
-          <label for="over_label">Email</label>
-        </p-floatlabel> -->
-
         <div class="flex flex-col w-full">
           <p-floatlabel>
             <input

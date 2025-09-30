@@ -26,6 +26,7 @@ export class WelcomeSectionComponent {
   @Output() scrollToFeature = new EventEmitter<void>();
 
   isSubmitted = false;
+  isUserExist = false;
   warningDialogVisible = false;
 
   // Guide
@@ -59,6 +60,7 @@ export class WelcomeSectionComponent {
   formEmail: FormGroup;
 
   constructor(
+    
     private localStorageService: LocalStorageService,
     private fb: FormBuilder
   ) {
@@ -72,7 +74,12 @@ export class WelcomeSectionComponent {
   }
 
   ngOnInit(): void {
-    // const anonymousUser = this.localStorageService.getItem('anonymousUser');
+    const anonymousUser = this.localStorageService.getItem('anonymousUser');
+
+    if (anonymousUser) {
+      this.anonymousUser = { ...anonymousUser }
+      this.isUserExist = true;
+    }
   }
 
   subscribe(): void {
@@ -83,7 +90,6 @@ export class WelcomeSectionComponent {
     
     this.anonymousUser.name = this.formName.value.name.trim();
     
-    console.log("🔥 ", this.anonymousUser);
     this.localStorageService.setItem('anonymousUser', { ...this.anonymousUser });
 
     this.inputNameDialogVisible = false;
