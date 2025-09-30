@@ -7,6 +7,7 @@ import { FloatLabel } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { emailPatternValidator } from 'app/shared/validators/email.validator';
 
 @Component({
   selector: 'app-welcome-section',
@@ -69,7 +70,7 @@ export class WelcomeSectionComponent {
     });
 
     this.formEmail = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, emailPatternValidator()]]
     });
   }
 
