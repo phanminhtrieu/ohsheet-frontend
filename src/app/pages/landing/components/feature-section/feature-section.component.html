@@ -64,5 +64,33 @@
         class="w-full hover:cursor-pointer hover:animate-shake-continuous"
       />
     </div>
+
+    <div *ngIf="feedbackButtonVisible">
+      <p-button
+        class="absolute bottom-[-50px] right-[300px] hover:animate-shake"
+        label="Feedback"
+        severity="secondary"
+        styleClass="!px-8 !px-12"
+        (click)="showDialog()"
+      />
+    </div>
+
+    <p-dialog [(visible)]="feedbackDialogVisible" [style]="{ width: '25rem' }">
+      <ng-template #header>
+        <span class="font-bold whitespace-pre-wrap">
+          Bạn hãy cho mình biết mong muốn, cảm nghĩ của về mình bạn là gì nhé 🥳
+        </span>
+      </ng-template>
+      <textarea rows="5" cols="43" pTextarea [(ngModel)]="feedback"></textarea>
+      <ng-template #footer>
+        <p-button
+          label="Cancel"
+          [text]="true"
+          severity="secondary"
+          (click)="feedbackDialogVisible = false"
+        />
+        <p-button label="Send" (click)="sendFeedback()" />
+      </ng-template>
+    </p-dialog>
   </div>
 </div>

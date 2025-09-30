@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { share, Subject } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 const LOCAL_STORAGE_PREFIX = 'ops.';
 @Injectable({
@@ -11,11 +12,14 @@ export class LocalStorageService {
   // With $, you can see that is a stream (can subscribe)
   public changes$ = this._onSubject.asObservable(); // Public - cannot next() just can subscribe
 
-  constructor() {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,) {}
 
   public getItem(key: string): any {
-    if (localStorage.getItem(LOCAL_STORAGE_PREFIX + key)) {
-      return JSON.parse(localStorage.getItem(LOCAL_STORAGE_PREFIX + key)!);
+
+    if (isPlatformBrowser(this.platformId)) {
+      if (localStorage.getItem(LOCAL_STORAGE_PREFIX + key)) {
+        return JSON.parse(localStorage.getItem(LOCAL_STORAGE_PREFIX + key)!);
+      }
     }
 
     return null;

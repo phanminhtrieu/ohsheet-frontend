@@ -2,11 +2,16 @@ import { Component } from '@angular/core';
 import { TopbarComponent } from 'app/shared/components/topbar/topbar.component';
 import { FeatureSectionComponent } from '../../components/feature-section/feature-section.component';
 import { WelcomeSectionComponent } from '../../components/welcome-section/welcome-section.component';
+import { ScrollTopModule } from 'primeng/scrolltop';
 
 @Component({
   selector: 'app-landing-list',
   standalone: true,
-  imports: [TopbarComponent, FeatureSectionComponent, WelcomeSectionComponent],
+  imports: [
+    TopbarComponent, 
+    FeatureSectionComponent, 
+    WelcomeSectionComponent, 
+    ScrollTopModule],
   templateUrl: './landing-list.component.html',
   styleUrl: './landing-list.component.scss'
 })

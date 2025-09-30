@@ -24,4 +24,6 @@ export interface IApiOptions {
 
 export enum Endpoints {
     TEST = '/auth/profile',
+
+    ANONYMOUS_SUBSCRIPTION = '/AnonymousSubscription',
 }
