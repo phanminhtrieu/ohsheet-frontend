@@ -46,7 +46,7 @@ export class ApiService {
       .request(method, normalizedUrl, {...options, withCredentials: true })
       .pipe(
         catchError((res) => {
-          this.notificationService.showErrorNotification(res.error || null);
+          this.notificationService.showErrorNotification(res.error.Message || null);
           return throwError(() => res);
         }),
         tap((result) => {
