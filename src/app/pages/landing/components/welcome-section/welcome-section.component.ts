@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { emailPatternValidator } from 'app/shared/validators/email.validator';
+import { LocalHostConstant } from 'app/shared/constants';
 
 @Component({
   selector: 'app-welcome-section',
@@ -75,7 +76,7 @@ export class WelcomeSectionComponent {
   }
 
   ngOnInit(): void {
-    const anonymousUser = this.localStorageService.getItem('anonymousUser');
+    const anonymousUser = this.localStorageService.getItem(LocalHostConstant.ANONYMOUS_USER);
 
     if (anonymousUser) {
       this.anonymousUser = { ...anonymousUser }
@@ -91,7 +92,7 @@ export class WelcomeSectionComponent {
     
     this.anonymousUser.name = this.formName.value.name.trim();
     
-    this.localStorageService.setItem('anonymousUser', { ...this.anonymousUser });
+    this.localStorageService.setItem(LocalHostConstant.ANONYMOUS_USER, { ...this.anonymousUser });
 
     this.inputNameDialogVisible = false;
     this.isSubmitted = true;
@@ -143,5 +144,12 @@ export class WelcomeSectionComponent {
 
   onScrollToFeature() {
     this.scrollToFeature.emit();
+  }
+
+  logoutAnonymousUser() {
+    this.localStorageService.removeItem(LocalHostConstant.ANONYMOUS_USER);
+    this.isUserExist = false;
+
+    console.log("abc");
   }
 }

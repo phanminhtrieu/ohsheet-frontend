@@ -10,7 +10,7 @@
     <img
       src="/assets/feature-sections/input-atomic.svg"
       alt=""
-      class="animate-shakeY-continuous-slow w-[650px] bottom-[130px] hover:cursor-pointer prevent-copy"
+      class="animate-shakeY-continuous-slow w-[650px] bottom-[130px] hover:cursor-pointer prevent-copy prevent-copy"
       (click)="toggleImgInputOption()"
     />
 
@@ -18,21 +18,21 @@
     <img
       src="/assets/arrows/arr-null-light.svg"
       alt=""
-      class="z-50 absolute left-[0px] top-[-20px] w-[100px]"
+      class="prevent-copy z-50 absolute left-[0px] top-[-20px] w-[100px]"
     />
 
     <!-- Text: Upload here-->
     <img
       src="/assets/texts/upload-here.svg"
       alt=""
-      class="z-50 absolute left-[-150px] top-[40px] w-[200px] rotate-[20deg]"
+      class="prevent-copy z-50 absolute left-[-150px] top-[40px] w-[200px] rotate-[20deg]"
     />
 
     <!-- Arrow point to Atomic icon up-->
     <img
       src="/assets/arrows/arr-null-light.svg"
       alt=""
-      class="z-50 absolute right-[0px] bottom-[-20px] w-[100px] rotate-[180deg]"
+      class="prevent-copy z-50 absolute right-[0px] bottom-[-20px] w-[100px] rotate-[180deg]"
     />
 
     <!-- Image input Option -->
@@ -46,7 +46,7 @@
       <img
         src="/assets/feature-sections/starry-night-with-title.svg"
         alt="Small1"
-        class="w-full hover:cursor-pointer hover:animate-shake-continuous"
+        class="prevent-copy w-full hover:cursor-pointer hover:animate-shake-continuous"
       />
     </div>
 
@@ -61,7 +61,7 @@
       <img
         src="/assets/feature-sections/audio-wave-with-title.svg"
         alt="Small1"
-        class="w-full hover:cursor-pointer hover:animate-shake-continuous"
+        class="prevent-copy w-full hover:cursor-pointer hover:animate-shake-continuous"
       />
     </div>
 
@@ -75,10 +75,14 @@
       />
     </div>
 
-    <p-dialog [(visible)]="feedbackDialogVisible" [style]="{ width: '25rem' }">
+    <p-dialog
+      [modal]="true"
+      [(visible)]="feedbackDialogVisible"
+      [style]="{ width: '25rem' }"
+    >
       <ng-template #header>
         <span class="font-bold whitespace-pre-wrap">
-          Bạn hãy cho mình biết mong muốn, cảm nghĩ của về mình bạn là gì nhé 🥳
+          Nếu bạn có mong muốn hay cảm nghĩ gì thì cứ nói cho mình nhé 🥳
         </span>
       </ng-template>
       <textarea rows="5" cols="43" pTextarea [(ngModel)]="feedback"></textarea>
@@ -89,7 +93,11 @@
           severity="secondary"
           (click)="feedbackDialogVisible = false"
         />
-        <p-button label="Send" (click)="sendFeedback()" />
+        <p-button
+          label="Send"
+          (click)="sendFeedback()"
+          [loading]="isLoading | async"
+        />
       </ng-template>
     </p-dialog>
   </div>
