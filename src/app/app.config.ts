@@ -1,11 +1,14 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { HttpClientModule } from '@angular/common/http';
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -18,9 +21,9 @@ const MyPreset = definePreset(Aura, {
           500: '{neutral.700}', // Nomarl state
           600: '{neutral.800}', // Hover state
           700: '{neutral.900}', // Click state
-          // 800: '{neutral.800}',
-          // 900: '{neutral.900}',
-          // 950: '{neutral.950}'
+          800: '{neutral.800}',
+          900: '{neutral.900}',
+          950: '{neutral.950}'
       }
   }
 });
@@ -36,7 +39,13 @@ export const appConfig: ApplicationConfig = {
             darkModeSelector: 'light', 
           }
       }
-})]
+    }),
+    importProvidersFrom(
+      BrowserAnimationsModule, 
+      ToastModule,
+      HttpClientModule),
+    MessageService
+  ]
 };
 
 

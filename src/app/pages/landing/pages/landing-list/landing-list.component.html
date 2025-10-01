@@ -1,0 +1,12 @@
+<app-topbar></app-topbar>
+<main>
+  <app-welcome-section
+    id="welcomeSection"
+    (scrollToFeature)="scrollToSection('featureSection')"
+  ></app-welcome-section>
+  <app-feature-section
+    id="featureSection"
+    (scrollToWelcome)="scrollToSection('welcomeSection')"
+  ></app-feature-section>
+  <p-scrolltop />
+</main>

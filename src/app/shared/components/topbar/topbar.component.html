@@ -10,7 +10,25 @@
   </ng-template>
 
   <div class="flex gap-4">
-    <p-button styleClass="!px-8" label="Sign In" />
-    <p-button styleClass="!px-8" label="Sign Up" severity="secondary" />
+    <p-button
+      styleClass="!px-8"
+      label="Sign In"
+      (click)="showComingSoonDialog()"
+    />
+    <p-button
+      styleClass="!px-8"
+      label="Sign Up"
+      severity="secondary"
+      (click)="showComingSoonDialog()"
+    />
   </div>
 </p-menubar>
+
+<p-dialog
+  header="Xin lũi mọi người, tớ sẽ tới sớm thôi 😭"
+  [(visible)]="comingSoonDialogVisible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+>
+  <img src="/assets/feature-sections/coming-soon.svg" alt="" />
+</p-dialog>

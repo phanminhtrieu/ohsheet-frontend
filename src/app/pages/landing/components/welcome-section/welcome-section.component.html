@@ -1,0 +1,390 @@
+<!-- Welcome Section -->
+<div
+  id="section1"
+  class="relative h-screen flex items-center justify-center bg-gray-100"
+>
+  <!-- Play Guide -->
+  <div class="" [class.pointer-events-none]="!playGuideVisible">
+    <img
+      src="/assets/imgs/started/click.svg"
+      alt=""
+      class="absolute w-[200px] right-[550px] top-[180px] transition-opacity duration-[1500ms] prevent-copy"
+      [class.opacity-0]="!playGuideVisible"
+    />
+    <img
+      src="/assets/imgs/started/play-button.svg"
+      alt=""
+      class="absolute animate-shakeY-continuous-slow top-[260px] w-[170px] hover:cursor-pointer transition-opacity duration-[1500ms] prevent-copy"
+      (click)="showWelcomeBox()"
+      [class.opacity-0]="!playGuideVisible"
+    />
+    <img
+      src="/assets/imgs/started/shadow.svg"
+      alt=""
+      class="absolute w-[200px] left-[630px] bottom-[210px] hover:cursor-pointer hover:animate-shake transition-opacity duration-[1500ms] prevent-copy"
+      (click)="onScrollToFeature()"
+      [class.opacity-0]="!playGuideVisible"
+    />
+    <img
+      src="/assets/imgs/started/skip.svg"
+      alt=""
+      class="absolute w-[100px] left-[600px] bottom-[100px] transition-opacity duration-[1500ms] prevent-copy"
+      [class.opacity-0]="!playGuideVisible"
+    />
+  </div>
+
+  <!-- Welcome box -->
+  <div
+    class="absolute z-10 w-[450px] h-[350px] left-10 shadow-2xl py-5 px-7 overflow-hidden hover:animate-shake opacity-0 transition-opacity duration-[1500ms]"
+    (mouseenter)="showLeftBackground()"
+    [class.pointer-events-none]="!welcomeBoxVisible"
+    [class.opacity-100]="welcomeBoxVisible"
+  >
+    <!-- Background chính -->
+    <div class="absolute inset-0 bg-stone-200 opacity-1"></div>
+
+    <!-- Nội dung trước khi submit -->
+    <div class="relative text-zinc-700" *ngIf="!isSubmitted">
+      <span class="text-3xl font-semibold">Welcome to </span>
+      <span class="text-4xl font-bold">OhSheet</span>
+      <br /><br />
+      <div *ngIf="!isUserExist">
+        <p class="font-semibold">
+          🍂 Cám ơn các bạn đã ghé thăm
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+        </p>
+        <p class="font-semibold">
+          🍂 Hiện tại tớ đang trong quá trình xây dựng, có lẽ sẽ mất thêm một
+          vài thời gian nữa để tung ra bản ra mắt đầu tiên.
+        </p>
+        <p class="font-semibold">
+          🍂 Nếu mọi người muốn nhận thông báo mới nhất từ
+          <span class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            >Oh Sheet</span
+          >
+          thì hãy nhập email vào bên dưới.
+        </p>
+      </div>
+
+      <div *ngIf="isUserExist">
+        <p class="font-semibold text-xl">
+          Ôi trời ơi,
+          <span
+            class="text-2xl font-bold text-white bg-stone-500 px-1 rounded"
+            >{{ anonymousUser.name }}</span
+          >
+          đã quay lại rồi à 🎉
+        </p>
+        <br />
+        <p class="font-semibold text-xl">
+          Hiện tại tớ đang được nâng cấp dần lên để có thể gặp bạn nè 😎
+        </p>
+        <br />
+        <p class="font-semibold text-xl">Chúc bạn một ngày tốt lành nhé ✨✨</p>
+        <br />
+        <div class="text-center mt-7">
+          <p-button
+            class="align-middle"
+            label="Không phải bạn?"
+            styleClass="underline "
+            [link]="true"
+            (click)="logoutAnonymousUser()"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit area -->
+    <form [formGroup]="formEmail" *ngIf="!isUserExist">
+      <div class="flex mt-10 justify-center" *ngIf="!isSubmitted">
+        <div class="flex flex-col w-full">
+          <p-floatlabel>
+            <input
+              pInputText
+              id="over_label"
+              formControlName="email"
+              autocomplete="off"
+              class="!rounded-tr-none !rounded-br-none w-full"
+            />
+            <label for="over_label">Email</label>
+          </p-floatlabel>
+
+          <ng-container
+            *ngIf="
+              formEmail.get('email')?.touched && formEmail.get('email')?.invalid
+            "
+          >
+            <small
+              class="p-error text-red-500 text-sm font-semibold mt-1"
+              *ngIf="formEmail.get('email')?.hasError('required')"
+            >
+              Bạn chưa nhập email 😭
+            </small>
+
+            <small
+              class="p-error text-red-500 text-sm font-semibold mt-1"
+              *ngIf="formEmail.get('email')?.hasError('email')"
+            >
+              Email không hợp lệ 🤔
+            </small>
+          </ng-container>
+        </div>
+
+        <p-button
+          id="btn-reach"
+          styleClass="!px-8 !rounded-tl-none !rounded-bl-none"
+          label="Subscribe"
+          (click)="showInputNameDialog()"
+        />
+      </div>
+    </form>
+
+    <!-- Nội dung sau khi submit -->
+    <div class="relative text-zinc-700" *ngIf="isSubmitted">
+      <span class="text-4xl font-bold">OhSheet !!!</span>
+      <span class="text-3xl font-semibold"></span>
+      <br /><br />
+      <p class="font-semibold text-xl">
+        Không thể ngờ rằng
+        <span class="text-2xl font-bold text-white bg-stone-500 px-1 rounded">{{
+          anonymousUser.name | slice : 0 : 10
+        }}</span>
+        đã trở thành một phần của chúng tớ 😲😲
+      </p>
+      <br />
+      <p class="font-semibold text-xl">
+        Khi nào có thông báo là tớ gửi thư cho cậu ngay nhé 🖊️😎
+      </p>
+      <img
+        src="/assets/welcome-sections/thank-you-after-submitted.svg"
+        alt=""
+        class="ml-[105px] w-[300px] pb-[10px]"
+      />
+    </div>
+
+    <!-- Hover area -->
+    <img
+      src="/assets/icons/hover-area.svg"
+      alt=""
+      class="absolute animate-shake-continuous-slow opacity-0 right-[0px] top-[0px] w-[80px] prevent-copy transition-opacity duration-[3000ms]"
+      [class.opacity-100]="pointerWelcomeBoxVisible"
+      [class.hidden]="hideWelcomeBoxPointer"
+    />
+  </div>
+
+  <!-- Left Background of Welcome box -->
+  <div
+    class="absolute z-0 bg-stone-700 w-[550px] h-svh left-0 opacity-0 transition-opacity duration-[1500ms]"
+    [class.opacity-100]="leftBackgroundVisible"
+  >
+    <img
+      src="/assets/icons/treble-clef-dark.svg"
+      alt=""
+      class="absolute left-1 w-[150px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/bass-clef-dark.svg"
+      alt=""
+      class="absolute left-[420px] top-[300px] rotate-[140deg] w-[150px] prevent-copy z-50"
+    />
+
+    <!-- Bottom of background welcomebox -->
+    <img
+      src="/assets/icons/treble-clef-light.svg"
+      alt=""
+      class="absolute bottom-7 left-[120px] w-[50px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/bass-clef-light.svg"
+      alt=""
+      class="absolute bottom-10 left-[220px] w-[50px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/c-clef-light.svg"
+      alt=""
+      class="absolute bottom-7 left-[320px] w-[50px] prevent-copy z-50"
+    />
+  </div>
+
+  <!-- Guide box -->
+  <div
+    class="absolute z-10 w-[450px] h-[430px] right-10 shadow-2xl py-5 px-7 overflow-hidden hover:animate-shake opacity-0 transition-opacity duration-[3000ms]"
+    (mouseenter)="showRightBackground()"
+    [class.pointer-events-none]="!guideBoxVisible"
+    [class.opacity-100]="guideBoxVisible"
+  >
+    <!-- Background chính -->
+    <div class="absolute inset-0 bg-white opacity-1"></div>
+
+    <!-- Nội dung -->
+    <div class="relative text-zinc-700 flex gap-3 flex-col">
+      <div class="">
+        <span class="text-3xl font-semibold">Find your </span>
+        <span class="text-5xl font-bold">Sheet</span>
+      </div>
+
+      <!-- <img src="/assets/imgs/work-flow.svg" alt="" class="h-[250px]" /> -->
+      <p-galleria
+        [value]="images"
+        styleClass="custom-galleria mt-4"
+        [numVisible]="5"
+        [circular]="true"
+        [showItemNavigators]="true"
+        [showThumbnails]="false"
+        [showIndicators]="true"
+        [showThumbnails]="false"
+        [changeItemOnIndicatorHover]="true"
+      >
+        <ng-template pTemplate="item" let-item>
+          <img class="h-[260px]" [src]="item.src" style="display: block" />
+        </ng-template>
+      </p-galleria>
+    </div>
+
+    <!-- Hover area -->
+    <img
+      src="/assets/icons/hover-area.svg"
+      alt=""
+      class="absolute animate-shake-continuous-slow opacity-0 left-[0px] bottom-[0px] w-[80px] prevent-copy transition-opacity duration-[3000ms]"
+      [class.opacity-100]="pointerGuideBoxVisible"
+      [class.hidden]="hideGuideBoxPointer"
+    />
+  </div>
+
+  <!-- Right Background of Guide box -->
+  <div
+    class="absolute z-0 opacity-0 bg-stone-700 w-[550px] h-svh right-0 transition-opacity duration-[1500ms]"
+    [class.opacity-100]="rightBackgroundVisible"
+  >
+    <img
+      src="/assets/icons/treble-clef-dark.svg"
+      alt=""
+      class="absolute right-1 w-[150px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/bass-clef-dark.svg"
+      alt=""
+      class="absolute right-[420px] top-[300px] rotate-[140deg] w-[150px] prevent-copy z-50"
+    />
+
+    <!-- Bottom of background welcomebox -->
+    <img
+      src="/assets/icons/treble-clef-light.svg"
+      alt=""
+      class="absolute bottom-7 right-[120px] w-[50px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/bass-clef-light.svg"
+      alt=""
+      class="absolute bottom-10 right-[220px] w-[50px] prevent-copy z-50"
+    />
+    <img
+      src="/assets/icons/c-clef-light.svg"
+      alt=""
+      class="absolute bottom-7 right-[320px] w-[50px] prevent-copy z-50"
+    />
+  </div>
+
+  <!-- Arrow point to Welcome box -->
+  <img
+    src="/assets/icons/arrow_1.svg"
+    alt=""
+    class="absolute animate-shake-continuous-slow opacity-0 left-[480px] top-[30px] w-[200px] rotate-6 prevent-copy transition-opacity duration-[3000ms]"
+    [class.opacity-100]="pointerWelcomeBoxVisible"
+    [class.hidden]="hideWelcomeBoxPointer"
+  />
+
+  <img
+    src="/assets/texts/move-here.svg"
+    alt=""
+    class="absolute animate-shake-continuous-slow opacity-0 left-[570px] top-[130px] w-[200px] rotate-6 prevent-copy transition-opacity duration-[3000ms]"
+    [class.opacity-100]="pointerWelcomeBoxVisible"
+    [class.hidden]="hideWelcomeBoxPointer"
+  />
+
+  <!-- Arrow point to Guide box -->
+  <img
+    src="/assets/icons/arrow_3.svg"
+    alt=""
+    class="absolute animate-shake-continuous-slow opacity-0 right-[470px] bottom-[10px] w-[200px] prevent-copy transition-opacity duration-[3000ms]"
+    [class.opacity-100]="pointerGuideBoxVisible"
+    [class.hidden]="hideGuideBoxPointer"
+  />
+
+  <!-- Notice -->
+  <img
+    src="/assets/highlights/notice.svg"
+    alt=""
+    class="absolute left-[840px] top-[270px] w-[75px] animate-shake-continuous opacity-0 transition-opacity duration-[3000ms]"
+    [class.pointer-events-none]="!mainButtonVisible"
+    [class.opacity-100]="mainButtonVisible"
+  />
+
+  <!-- Main button -->
+  <p-button
+    id="btn-reach"
+    class="animate-shake-continuous shadow-2xl opacity-0 transition-opacity duration-[3000ms]"
+    styleClass="!px-12 !py-3"
+    label="Let reach it!"
+    (click)="onScrollToFeature()"
+    [class.pointer-events-none]="!mainButtonVisible"
+    [class.opacity-100]="mainButtonVisible"
+  />
+
+  <!-- Dialog -->
+  <p-dialog
+    [modal]="true"
+    [(visible)]="inputNameDialogVisible"
+    [style]="{ width: '25rem' }"
+  >
+    <span class="text-2xl font-semibold block mb-8"
+      >Tôi có thể gọi bạn là ... ?</span
+    >
+
+    <form [formGroup]="formName">
+      <div class="flex items-center gap-4 mb-4">
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          class="flex-auto"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Thông báo lỗi -->
+      <small
+        class="p-error text-red-500 text-1xl font-semibold"
+        *ngIf="
+          formName.get('name')?.touched &&
+          formName.get('name')?.hasError('required')
+        "
+      >
+        Bạn hãy cho mình được biết tên bạn đi mà 😭
+      </small>
+
+      <div class="flex justify-end gap-2 mt-5">
+        <p-button
+          label="Cancel"
+          severity="secondary"
+          (click)="inputNameDialogVisible = false"
+        />
+        <p-button label="Save" (click)="subscribe()" />
+      </div>
+    </form>
+  </p-dialog>
+
+  <p-dialog
+    header="Bạn gì ơi!"
+    [(visible)]="warningDialogVisible"
+    [modal]="true"
+    [style]="{ width: '20rem' }"
+  >
+    <p>Bạn chưa nhập email hoặc email không hợp lệ nè trùi ui 😭</p>
+    <p-footer>
+      <p-button label="OK" (click)="warningDialogVisible = false"></p-button>
+    </p-footer>
+  </p-dialog>
+</div>
