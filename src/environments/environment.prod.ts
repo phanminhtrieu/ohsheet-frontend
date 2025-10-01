@@ -6,7 +6,7 @@ export const environment = {
     iconsPath: `${basePath}assets/icons`,
     imgPath: `${basePath}assets/images`,
     basePath: '',
-    apiUrl: `${basePath}api/frontend`
+    apiUrl: `${apiBasePath}api/frontend`
   };
   
   export {};
