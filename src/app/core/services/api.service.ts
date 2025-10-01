@@ -5,6 +5,7 @@ import { NotificationService } from './notification.service';
 import { environment } from '@env/environment';
 import { Endpoints, IApiOptions, Methods } from 'app/enums/api';
 import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
+import { SpinnerService } from './spinner.service';
 
 
 @Injectable({
@@ -18,7 +19,8 @@ export class ApiService {
   constructor(
     private httpClient: HttpClient,
     private configService: ConfigService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private spinnerService: SpinnerService
   ) { 
     this.baseUrl = environment.apiUrl;
   }
@@ -32,7 +34,10 @@ export class ApiService {
       this.configService.setRequestInProgress(true);
       this.requestInProgressTimeout();
     }
+
     this.requestCount += 1;
+    this.configService.setRequestInProgress(true);
+
     const normalizedUrl = `${this.baseUrl}${this.normalizeUrl(url, options.urlReplacements!)}`;
 
     options.params =  options.params || {};
