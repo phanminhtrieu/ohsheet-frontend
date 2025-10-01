@@ -42,6 +42,7 @@
       [class.scale-100]="inputOptionsVisible"
       [class.-translate-y-[170px]]="inputOptionsVisible"
       [class.-translate-x-[-450px]]="inputOptionsVisible"
+      (click)="inputImg()"
     >
       <img
         src="/assets/feature-sections/starry-night-with-title.svg"
@@ -57,6 +58,7 @@
       [class.scale-100]="inputOptionsVisible"
       [class.-translate-y-[-150px]]="inputOptionsVisible"
       [class.-translate-x-[450px]]="inputOptionsVisible"
+      (click)="inputAudio()"
     >
       <img
         src="/assets/feature-sections/audio-wave-with-title.svg"
@@ -67,8 +69,8 @@
 
     <div *ngIf="feedbackButtonVisible">
       <p-button
-        class="absolute bottom-[-50px] right-[300px] hover:animate-shake"
-        label="Feedback"
+        class="absolute bottom-[-80px] right-[200px] hover:animate-shake"
+        label="Hãy để lại cho tớ một lời nhắn nhé"
         severity="secondary"
         styleClass="!px-8 !px-12"
         (click)="showDialog()"
@@ -101,4 +103,24 @@
       </ng-template>
     </p-dialog>
   </div>
+
+  <p-dialog
+    header="Xin lũi mọi người, tớ sẽ tới sớm thôi 😭"
+    [(visible)]="comingSoonDialogVisible"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+  >
+    <img src="/assets/feature-sections/coming-soon.svg" alt="" />
+  </p-dialog>
+
+  <p-dialog
+    header="Nếu bạn muốn cho mình một lời nhắn thì hãy cho mình biết email của bạn trước nha 😘"
+    [(visible)]="inputEmailFirstDialogVisible"
+    [modal]="true"
+    [style]="{ width: '600px' }"
+  >
+    <div class="px-[20px]">
+      <img src="/assets/feature-sections/input-email-first.svg" alt="" />
+    </div>
+  </p-dialog>
 </div>
