@@ -69,18 +69,22 @@
       </div>
 
       <div *ngIf="isUserExist">
-        <p class="font-semibold">Ôi trời ơi, bạn đã quay lại rồi à 🎉</p>
-        <p class="font-semibold">
-          Hiện tại tớ đang được nâng cấp dần lên để có thể gặp
+        <p class="font-semibold text-xl">
+          Ôi trời ơi,
           <span
-            class="text-xl font-bold text-white bg-stone-500 px-1 rounded"
+            class="text-2xl font-bold text-white bg-stone-500 px-1 rounded"
             >{{ anonymousUser.name }}</span
           >
-          nè 😎
+          đã quay lại rồi à 🎉
         </p>
-        <p class="font-semibold">Chúc bạn một ngày tốt lành nhé</p>
         <br />
-        <div class="text-center mt-10">
+        <p class="font-semibold text-xl">
+          Hiện tại tớ đang được nâng cấp dần lên để có thể gặp bạn nè 😎
+        </p>
+        <br />
+        <p class="font-semibold text-xl">Chúc bạn một ngày tốt lành nhé ✨✨</p>
+        <br />
+        <div class="text-center mt-7">
           <p-button
             class="align-middle"
             label="Không phải bạn?"
@@ -206,19 +210,37 @@
 
   <!-- Guide box -->
   <div
-    class="absolute z-10 w-[450px] h-[350px] right-10 shadow-2xl py-5 px-7 overflow-hidden hover:animate-shake opacity-0 transition-opacity duration-[3000ms]"
+    class="absolute z-10 w-[450px] h-[430px] right-10 shadow-2xl py-5 px-7 overflow-hidden hover:animate-shake opacity-0 transition-opacity duration-[3000ms]"
     (mouseenter)="showRightBackground()"
     [class.pointer-events-none]="!guideBoxVisible"
     [class.opacity-100]="guideBoxVisible"
   >
     <!-- Background chính -->
-    <div class="absolute inset-0 bg-stone-200 opacity-1"></div>
+    <div class="absolute inset-0 bg-white opacity-1"></div>
 
     <!-- Nội dung -->
-    <div class="relative text-zinc-700">
-      <span class="text-3xl font-semibold">Find your </span
-      ><span class="text-5xl font-bold">Sheet</span>
-      <img src="/assets/imgs/work-flow.svg" alt="" class="h-[250px]" />
+    <div class="relative text-zinc-700 flex gap-3 flex-col">
+      <div class="">
+        <span class="text-3xl font-semibold">Find your </span>
+        <span class="text-5xl font-bold">Sheet</span>
+      </div>
+
+      <!-- <img src="/assets/imgs/work-flow.svg" alt="" class="h-[250px]" /> -->
+      <p-galleria
+        [value]="images"
+        styleClass="custom-galleria mt-4"
+        [numVisible]="5"
+        [circular]="true"
+        [showItemNavigators]="true"
+        [showThumbnails]="false"
+        [showIndicators]="true"
+        [showThumbnails]="false"
+        [changeItemOnIndicatorHover]="true"
+      >
+        <ng-template pTemplate="item" let-item>
+          <img class="h-[260px]" [src]="item.src" style="display: block" />
+        </ng-template>
+      </p-galleria>
     </div>
 
     <!-- Hover area -->
@@ -286,7 +308,7 @@
   <img
     src="/assets/icons/arrow_3.svg"
     alt=""
-    class="absolute animate-shake-continuous-slow opacity-0 right-[500px] top-[500px] w-[200px] prevent-copy transition-opacity duration-[3000ms]"
+    class="absolute animate-shake-continuous-slow opacity-0 right-[470px] bottom-[10px] w-[200px] prevent-copy transition-opacity duration-[3000ms]"
     [class.opacity-100]="pointerGuideBoxVisible"
     [class.hidden]="hideGuideBoxPointer"
   />

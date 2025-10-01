@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PRIMARY_OUTLET } from '@angular/router';
 import { AnonymousSubscriptionService } from 'app/core/services/anonymous-subscription.service';
@@ -25,8 +25,16 @@ import { finalize } from 'rxjs';
   styleUrl: './feature-section.component.scss'
 })
 export class FeatureSectionComponent {
+  @Output() scrollToWelcome = new EventEmitter<void>();
+
   inputOptionsVisible = false;
+
+  // Dialog
   feedbackDialogVisible = false;
+  comingSoonDialogVisible = false;
+  inputEmailFirstDialogVisible = false;
+
+
   isLoading!: any;
   
   feedback!: string;
@@ -60,8 +68,17 @@ export class FeatureSectionComponent {
 
   sendFeedback() {
     const anonymousUser = this.localStorageService.getItem("anonymousUser");
-    this.anonymousUser = { ...anonymousUser, message: this.feedback };
+    
+    if (!anonymousUser) {
+      this.scrollToWelcome.emit();
+      this.feedbackDialogVisible = false;
+      this.inputEmailFirstDialogVisible = true;
 
+      return;
+    } 
+    
+    this.anonymousUser = { ...anonymousUser, message: this.feedback };
+    
     if (this.anonymousUser.message) {
       this.anonymousSubscriptionService.sendFeedback(this.anonymousUser)
         .pipe(
@@ -71,7 +88,14 @@ export class FeatureSectionComponent {
           })
         )
         .subscribe(() => this.feedback = '');
-      console.log("Already send");
     }
+  }
+  
+  inputImg() {
+    this.comingSoonDialogVisible = true
+  }
+
+  inputAudio() {
+    this.comingSoonDialogVisible = true
   }
 }

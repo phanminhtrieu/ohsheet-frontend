@@ -9,6 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { emailPatternValidator } from 'app/shared/validators/email.validator';
 import { LocalHostConstant } from 'app/shared/constants';
+import { GalleriaModule } from 'primeng/galleria';
 
 @Component({
   selector: 'app-welcome-section',
@@ -20,12 +21,26 @@ import { LocalHostConstant } from 'app/shared/constants';
     InputTextModule, 
     FloatLabel,
     DialogModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule,
+    GalleriaModule],
   templateUrl: './welcome-section.component.html',
   styleUrl: './welcome-section.component.scss'
 })
 export class WelcomeSectionComponent {
   @Output() scrollToFeature = new EventEmitter<void>();
+
+  images = [
+    {
+      src: '/assets/imgs/work-flow.png',
+      alt: '',
+      title: 'Create your sheet'
+    },
+    {
+      src: '/assets/imgs/work-flow-1.png',
+      alt: '',
+      title: 'Find your sheet'
+    },
+  ]
 
   isSubmitted = false;
   isUserExist = false;
