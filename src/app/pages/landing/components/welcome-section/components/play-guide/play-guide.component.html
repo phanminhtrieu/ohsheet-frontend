@@ -1,0 +1,47 @@
+<div
+  [class.pointer-events-none]="!visible"
+  class="relative max-w-[600px] w-screen h-[692px]"
+>
+  <!-- "Click" -->
+  <app-position-wrapper right="5%" top="25%">
+    <img
+      src="/assets/imgs/started/click.svg"
+      alt=""
+      class="w-[200px] transition-opacity duration-[1500ms] prevent-copy"
+      [class.opacity-0]="!visible"
+    />
+  </app-position-wrapper>
+
+  <!-- Play button -->
+  <app-position-wrapper [centerX]="true" [centerY]="true" zIndex="100">
+    <img
+      src="/assets/imgs/started/play-button.svg"
+      alt=""
+      class="w-[170px] hover:cursor-pointer transition-opacity duration-[1500ms] prevent-copy animate-shakeY-continuous-slow"
+      (click)="playClicked.emit()"
+      [class.opacity-0]="!visible"
+    />
+  </app-position-wrapper>
+
+  <!-- Shadow -->
+  <app-position-wrapper bottom="32%" [centerX]="true" zIndex="100">
+    <img
+      src="/assets/imgs/started/shadow.svg"
+      alt=""
+      class="w-[200px] hover:cursor-pointer hover:animate-shake transition-opacity duration-[1500ms] prevent-copy"
+      (click)="scrollToFeature.emit()"
+      [class.opacity-0]="!visible"
+    />
+  </app-position-wrapper>
+
+  <!-- "Skip" -->
+  <app-position-wrapper bottom="15%" left="25%">
+    <img
+      src="/assets/imgs/started/skip.svg"
+      alt=""
+      class="w-[100px] transition-opacity duration-[1500ms] prevent-copy"
+      [class.opacity-0]="!visible"
+      (click)="skipClicked.emit()"
+    />
+  </app-position-wrapper>
+</div>

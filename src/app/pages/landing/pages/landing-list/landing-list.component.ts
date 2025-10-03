@@ -11,7 +11,8 @@ import { ScrollTopModule } from 'primeng/scrolltop';
     TopbarComponent, 
     FeatureSectionComponent, 
     WelcomeSectionComponent, 
-    ScrollTopModule],
+    ScrollTopModule,
+  ],
   templateUrl: './landing-list.component.html',
   styleUrl: './landing-list.component.scss'
 })

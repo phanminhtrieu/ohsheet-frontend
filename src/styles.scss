@@ -2,3 +2,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.prevent-copy {
+    -webkit-user-drag: none;
+    // user-drag: none;
+  }

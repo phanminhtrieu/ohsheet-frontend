@@ -1,0 +1,41 @@
+<div
+  class="z-10 w-[450px] h-[430px] right-10 shadow-2xl py-5 px-7 overflow-hidden hover:animate-shake opacity-0 transition-opacity duration-[3000ms]"
+  (mouseenter)="showRightBackground.emit()"
+  [class.pointer-events-none]="!guideBoxVisible"
+  [class.opacity-100]="guideBoxVisible"
+>
+  <!-- Background chính -->
+  <div class="absolute inset-0 bg-white opacity-1"></div>
+
+  <!-- Nội dung -->
+  <div class="relative text-zinc-700 flex gap-3 flex-col">
+    <div>
+      <span class="text-3xl font-semibold">Find your </span>
+      <span class="text-5xl font-bold">Sheet</span>
+    </div>
+
+    <p-galleria
+      [value]="images"
+      styleClass="custom-galleria mt-4"
+      [numVisible]="5"
+      [circular]="true"
+      [showItemNavigators]="true"
+      [showThumbnails]="false"
+      [showIndicators]="true"
+      [changeItemOnIndicatorHover]="true"
+    >
+      <ng-template pTemplate="item" let-item>
+        <img class="h-[260px]" [src]="item.src" [alt]="item.alt" />
+      </ng-template>
+    </p-galleria>
+  </div>
+
+  <!-- Hover area -->
+  <img
+    src="/assets/icons/hover-area.svg"
+    alt=""
+    class="absolute animate-shake-continuous-slow opacity-0 left-[0px] bottom-[0px] w-[80px] prevent-copy transition-opacity duration-[3000ms]"
+    [class.opacity-100]="pointerGuideBoxVisible"
+    [class.hidden]="hideGuideBoxPointer"
+  />
+</div>
