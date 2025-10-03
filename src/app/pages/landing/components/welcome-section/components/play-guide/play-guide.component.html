@@ -24,7 +24,7 @@
   </app-position-wrapper>
 
   <!-- Shadow -->
-  <app-position-wrapper bottom="32%" [centerX]="true" zIndex="100">
+  <app-position-wrapper bottom="32%" left="28%" zIndex="100">
     <img
       src="/assets/imgs/started/shadow.svg"
       alt=""
@@ -41,7 +41,6 @@
       alt=""
       class="w-[100px] transition-opacity duration-[1500ms] prevent-copy"
       [class.opacity-0]="!visible"
-      (click)="skipClicked.emit()"
     />
   </app-position-wrapper>
 </div>

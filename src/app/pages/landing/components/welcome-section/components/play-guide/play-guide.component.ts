@@ -11,11 +11,8 @@ import { PositionWrapperComponent } from 'app/shared/components/position-wrapper
 })
 export class PlayGuideComponent {
   @Input() visible = true;
-
-  // Events: parent sẽ lắng nghe và xử lý (giữ nguyên logic ở parent)
+  
   @Output() playClicked = new EventEmitter<void>();
   @Output() scrollToFeature = new EventEmitter<void>();
-
-  @Output() skipClicked = new EventEmitter<void>(); // Không cần cái này
 
 }

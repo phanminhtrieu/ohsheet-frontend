@@ -1,11 +1,11 @@
-<main>
+<main class="overflow-auto h-screen scrollbar-hide">
   <app-welcome-section
     id="welcomeSection"
     (scrollToFeature)="scrollToSection('featureSection')"
   ></app-welcome-section>
-  <!-- <app-feature-section
+  <app-feature-section
     id="featureSection"
     (scrollToWelcome)="scrollToSection('welcomeSection')"
-  ></app-feature-section> -->
+  ></app-feature-section>
   <p-scrolltop />
 </main>

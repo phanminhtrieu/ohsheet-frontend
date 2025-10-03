@@ -20,10 +20,12 @@ export class LandingListComponent {
 
   scrollToSection(sectionId: string) {
     const target = document.getElementById(sectionId);
-    if (!target) return;
+    const container = document.querySelector('main');
+    
+    if (!target || !container) return;
   
-    const targetPosition = target.getBoundingClientRect().top + window.scrollY;
-    const startPosition = window.scrollY;
+    const targetPosition = target.offsetTop; 
+    const startPosition = container.scrollTop;
     const distance = targetPosition - startPosition;
     const duration = 800;
     let start: number | null = null;
@@ -32,7 +34,10 @@ export class LandingListComponent {
       if (!start) start = timestamp;
       const progress = timestamp - start;
       const percent = Math.min(progress / duration, 1);
-      window.scrollTo(0, startPosition + distance * percent);
+      container.scrollTo({
+        top: startPosition + distance * percent,
+        behavior: "auto"
+      });
       if (progress < duration) requestAnimationFrame(step);
     };
   
