@@ -1,39 +1,6 @@
-@keyframes spin-around {
-    0%   { transform: rotate(0deg) translateX(150px) rotate(0deg); opacity: 1; }
-    100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); opacity: 1; }
-  }
-  
-  .orbit {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-origin: center center;
-    animation: spin-around 5s linear infinite;
-    transition: animation-duration 0.3s ease; 
-    opacity: 0; /* mặc định ẩn */
-  }
-  
-  /* Khi hover button ẩn đi mấy nốt nhạc xung quanh */
-  .fast {
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  /* Offset các SVG để fade-in theo delay */
-  .orbit-0 { animation-delay: 0s; opacity: 1; }
-  .orbit-1 { animation-delay: 1.5s; animation-fill-mode: forwards; }
-  .orbit-2 { animation-delay: 3s; animation-fill-mode: forwards; }
-  .orbit-3 { animation-delay: 4.5s; animation-fill-mode: forwards; }
-  
-  /* Không cho bôi đen hoặc kéo ảnh */
-  img {
-    user-select: none;
-  }
-  
-  .prevent-copy {
-    -webkit-user-drag: none;
-    // user-drag: none;
-  }
-  
+.prevent-copy {
+  -webkit-user-drag: none;
+  // user-drag: none;
+}
 
 
