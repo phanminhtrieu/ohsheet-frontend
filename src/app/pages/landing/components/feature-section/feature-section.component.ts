@@ -10,6 +10,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
+import { UploadAudioDialogComponent } from './components/upload-audio-dialog/upload-audio-dialog.component';
 
 @Component({
   selector: 'app-feature-section',
@@ -20,7 +21,9 @@ import { finalize } from 'rxjs';
     DialogModule, 
     TextareaModule, 
     FormsModule,
-    ProgressSpinnerModule ],
+    ProgressSpinnerModule,
+    UploadAudioDialogComponent
+  ],
   templateUrl: './feature-section.component.html',
   styleUrl: './feature-section.component.scss'
 })
@@ -33,6 +36,7 @@ export class FeatureSectionComponent {
   feedbackDialogVisible = false;
   comingSoonDialogVisible = false;
   inputEmailFirstDialogVisible = false;
+  uploadAudioDialogVisible = false;
 
 
   isLoading!: any;
@@ -96,6 +100,7 @@ export class FeatureSectionComponent {
   }
 
   inputAudio() {
-    this.comingSoonDialogVisible = true
+    console.log("💸");
+    this.uploadAudioDialogVisible = true
   }
 }
