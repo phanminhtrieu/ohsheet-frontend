@@ -116,16 +116,19 @@ export class SheetRendererComponent {
 
     // Chuyển từ tín hiệu MIDI -> ký hiệu chữ c, d, e, ...
     const vexflowNotes = notesArray.map(([start, end, pitch]) => this.midiToVexflowKey(start, end, pitch));
+    const groupedNotesString =  this.notesToString(vexflowNotes);
+    const groupedNotesArray = groupedNotesString.split(", ");
 
     console.log("✨", vexflowNotes);
+    console.log("✨ 2", groupedNotesString.split(", "));
 
     let line = 1;
     // Chia nốt thành từng chunk
-    for (let i = 0; i < vexflowNotes.length; i += chunkSize) {
-      const chunkObjects = vexflowNotes.slice(i, i + chunkSize); // includes { start, end, note}
-      const chunk = chunkObjects.map(chunkObject => chunkObject.note);
+    for (let i = 0; i < groupedNotesArray.length; i += chunkSize) {
+      const chunk = groupedNotesArray.slice(i, i + chunkSize); 
+      // const chunk = chunkObjects.map(chunkObject => chunkObject.note);
       
-      console.log("😶‍🌫️",chunkObjects);
+      console.log("😶‍🌫️",chunk);
 
       const voice = new Voice();
       voice.setMode(Voice.Mode.SOFT); // Không quan tâm nó có bao nhiêu phách trong một ô nhịp
@@ -133,7 +136,8 @@ export class SheetRendererComponent {
       try {
         // Add note vào 1 voice
         // const tickables = score.notes(this.notesToString(chunk));
-        const tickables = score.notes(this.notesToString(chunkObjects));
+        // const tickables = score.notes(this.notesToString(chunkObjects));
+        const tickables = score.notes(chunk.join(", "));
         voice.addTickables(tickables);
         
       } catch (e) {
@@ -179,11 +183,6 @@ export class SheetRendererComponent {
   }
   
   notesToString(notes: any, tolerance = 0.2): string {
-    // const note = "(C4 E4 G4)/q, D4/8, E4, F4, G4"
-    // return note;
-
-    // return notes.join(", ");
-
     if (!notes || notes.length === 0) return "";
 
     const result: string[] = [];
