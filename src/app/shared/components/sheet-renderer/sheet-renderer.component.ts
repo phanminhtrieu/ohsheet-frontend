@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import VexFlow, { Factory, EasyScore, Voice, Formatter, Stave } from 'vexflow';
+import VexFlow, { Factory, EasyScore, Voice, Formatter, Stave, StaveNote } from 'vexflow';
+
+interface Note {
+  start: number;
+  note: string;
+  duration: number;
+  [key: string]: any; // hỗ trợ các thuộc tính khác
+}
+
 @Component({
   selector: 'app-sheet-renderer',
   standalone: true,
@@ -15,15 +23,56 @@ export class SheetRendererComponent {
 
   ngOnInit(): void {
     // this.renderSheet();
-    this.renderNotes([
-      'C4/q', 'D4/q', 'E4/q', 'F4/q', 'G4/q', 'A4/q', 'B4/q', 'C5/q', 
-      'C4/q', 'D4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 
-      'C4/q', 'D4/q', 'E4/q', 'F4/q', 'G4/q', 'A4/q', 'B4/q', 'C5/q', 
-      'C4/q', 'D4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 
-      'C4/q', 'D4/q', 'E4/q', 'F4/q', 'G4/q', 'A4/q', 'B4/q', 'C5/q', 
-      'C4/q', 'D4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 'E4/q', 
-    ], 
-    true);
+    // this.renderNotesGrouped([
+    //   ["[g4,e4,d4]/q"],
+    //   ["d4/q"],
+    //   ["e4/q"],
+    //   ["[c5,d4]/q"],
+    //   ["g4/q"],
+    //   ["[b3,c3]/q"]
+    // ]);
+    console.log("Xap xi:", Math.abs(0.5108390022675737 - 0.4992290249433107));
+    
+    const previewNotes: [number, number, number][] = [
+      [7.004668027210885,7.225257596371883,72], 
+      [7.004668027210885,7.422627210884354,60],
+      [6.49382902494331,6.714418594104308,74],
+      [6.49382902494331,6.9930580498866215,62],
+      [6.006209977324263,6.482219047619048,64],
+      [5.505697052154195,5.982990022675737,65],
+      [5.006468027210884,5.494087074829932,67],
+      [4.495629024943311,4.9832480725623585,69],
+      [3.9963999999999995,4.484019047619047,71],
+
+      [3.4958870748299318,3.973180045351474,72],
+      [2.996658049886621,3.484277097505669,71],
+      [2.4974290249433104,2.973438095238095,69],
+      [2.009809977324263,2.4858190476190476,67],
+      [1.509297052154195,1.986590022675737,65],
+      [1.0100680272108844,1.486077097505669,64],
+      [0.5108390022675737,0.9868480725623583,62],
+      [0.4992290249433107,0.6617687074829932,74],
+      [0.011609977324263039,0.47600907029478456,60],
+      [0.011609977324263039,0.16253968253968254,72], 
+    ];
+    
+
+    // previewNotes.sort((a, b) => a[0] - b[0]);
+    // console.log("🍺", previewNotes);
+
+
+    // let notes: string[] = previewNotes.map(n => this.midiToVexflowKey(n[2] as number));
+
+
+    // const notes = this.convertPreviewNotesToVexflowNotes(previewNotes, this.midiToVexflowKey)
+    // console.log("🙃", notes);
+
+    // this.renderNotes(notes, true);
+
+    // this.renderNotesFromPreview(previewNotes, 8);
+    
+
+    this.renderNotes(previewNotes, true);
   }
 
   renderSheet() {
@@ -48,7 +97,7 @@ export class SheetRendererComponent {
     vf.draw();
   }
 
-  renderNotes(notesArray: string[], isDemo: boolean) {
+  renderNotes(notesArray: [number, number, number][], isDemo: boolean) {
     // Cấu hình
     const staveWidth = 450;  // chiều rộng mỗi dòng khuông
     const chunkSize = 8;     // số nốt tối đa mỗi dòng
@@ -65,31 +114,49 @@ export class SheetRendererComponent {
     const score = vf.EasyScore();
     const context = vf.getContext();
 
+    // Chuyển từ tín hiệu MIDI -> ký hiệu chữ c, d, e, ...
+    const vexflowNotes = notesArray.map(([start, end, pitch]) => this.midiToVexflowKey(start, end, pitch));
+
+    console.log("✨", vexflowNotes);
+
     let line = 1;
     // Chia nốt thành từng chunk
-    for (let i = 0; i < notesArray.length; i += chunkSize) {
-      const chunk = notesArray.slice(i, i + chunkSize);
+    for (let i = 0; i < vexflowNotes.length; i += chunkSize) {
+      const chunkObjects = vexflowNotes.slice(i, i + chunkSize); // includes { start, end, note}
+      const chunk = chunkObjects.map(chunkObject => chunkObject.note);
+      
+      console.log("😶‍🌫️",chunkObjects);
 
-      // Tạo voice mềm
       const voice = new Voice();
-      voice.setMode(Voice.Mode.SOFT);
-      const tickables = score.notes(chunk.join(', '));
-      voice.addTickables(tickables);
+      voice.setMode(Voice.Mode.SOFT); // Không quan tâm nó có bao nhiêu phách trong một ô nhịp
+
+      try {
+        // Add note vào 1 voice
+        // const tickables = score.notes(this.notesToString(chunk));
+        const tickables = score.notes(this.notesToString(chunkObjects));
+        voice.addTickables(tickables);
+        
+      } catch (e) {
+        console.error("Lỗi format note: ", chunk, e);
+      }
 
       // Tạo stave thủ công
       const stave = new Stave(xOffset, yOffset, staveWidth);
       stave.addClef('treble').setContext(context).draw();
 
-      // 🟢 Đánh số dòng bằng context (vẽ text thủ công)
+      // Đánh số dòng bằng context 
       const ctx = vf.getContext();
       const y = stave.getYForTopText() + 35;
       ctx.fillText(`${line}`, 15, y);
 
+      const voices = [voice];
+
       // Căn đều các nốt trên stave
-      new Formatter().joinVoices([voice]).format([voice], stave.getWidth() - 50);
+      this.formatVoices(voices, stave);
 
       // Vẽ voice lên stave
-      voice.draw(context, stave);
+      // voice.draw(context, stave);
+      this.drawVoicesOnStave(context, stave, voices);
 
       // Tăng yOffset cho dòng tiếp theo
       yOffset += staveHeight;
@@ -98,5 +165,91 @@ export class SheetRendererComponent {
 
     // Cuối cùng vẽ Factory
     vf.draw();
+  }
+
+  midiToVexflowKey(startTime: number, endTime: number, pitch: number): {start: number, end: number, note :string } {
+    const noteNames = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
+    const octave = Math.floor(pitch / 12) - 1;
+    const name = noteNames[pitch % 12];
+    return {
+      start: startTime,
+      end: endTime,
+      note: `${name}${octave}`
+    };
+  }
+  
+  notesToString(notes: any, tolerance = 0.2): string {
+    // const note = "(C4 E4 G4)/q, D4/8, E4, F4, G4"
+    // return note;
+
+    // return notes.join(", ");
+
+    if (!notes || notes.length === 0) return "";
+
+    const result: string[] = [];
+    let currentGroup: Note[] = [];
+
+    for (let i = 0; i < notes.length; i++) {
+      const note = notes[i];
+      const last = currentGroup[currentGroup.length - 1];
+
+      if (i > 0) {
+        console.log("🤬", Math.abs(note.start - last.start));
+
+      }
+      
+      if (last && Math.abs(note.start - last.start) <= tolerance) {
+        console.log("vao 🥶");
+        // cùng thời điểm -> thêm vào group
+        currentGroup.push(note);
+      } else {
+        // xử lý group cũ
+        if (currentGroup.length > 0) {
+          if (currentGroup.length === 1) {
+            result.push(`${currentGroup[0].note}/q`);
+          } else {
+            const chordNotes = currentGroup.map(n => n.note).join(" ");
+            result.push(`(${chordNotes})/q`);
+          }
+        }
+        // bắt đầu group mới
+        currentGroup = [note];
+      }
+    }
+
+    // push group cuối cùng
+    if (currentGroup.length > 0) {
+      console.log("group: ", currentGroup);
+
+      if (currentGroup.length === 1) {
+        result.push(`${currentGroup[0].note}/q`);
+      } else {
+        const chordNotes = currentGroup.map(n => n.note).join(" ");
+        result.push(`(${chordNotes})/q`);
+      }
+    }
+
+    console.log("🕵️",result.join(", "));
+
+    return result.join(", ");
+  }
+
+  formatVoices(voices: Voice | Voice[], stave: Stave) {
+    const voiceArray = Array.isArray(voices) ? voices : [voices];
+    new Formatter().joinVoices(voiceArray).format(voiceArray, stave.getWidth() - 50);
+  }
+
+  drawVoicesOnStave(
+    context: any,
+    stave: Stave,
+    voices: Voice | Voice[],
+  ) {
+    // Chắc chắn voices là mảng
+    const voiceArray = Array.isArray(voices) ? voices : [voices];
+  
+    // Vẽ từng voice lên stave
+    for (const voice of voiceArray) {
+      voice.draw(context, stave);
+    }
   }
 }
