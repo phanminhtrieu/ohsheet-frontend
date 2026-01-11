@@ -6,6 +6,7 @@ import { NgFor } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { ComingSoonDialogComponent } from '../coming-soon-dialog/coming-soon-dialog.component';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -25,6 +26,8 @@ export class TopbarComponent {
   items: MenuItem[] = [];
   comingSoonDialogVisible = false;
 
+  constructor(private router: Router) { }
+
   ngOnInit() {
     this.items = [
       { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
@@ -35,5 +38,9 @@ export class TopbarComponent {
 
   showComingSoonDialog() {
     this.comingSoonDialogVisible = true
+  }
+
+  navigateToSignUp() {
+    this.router.navigate(['/sign-up']);
   }
 }

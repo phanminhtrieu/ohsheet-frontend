@@ -1,0 +1,126 @@
+<div class="container flex justify-center py-10">
+    <p-stepper [(value)]="activeStep" class="stepper-container w-[70%]">
+        <p-step-list>
+            <p-step [value]="1" class="flex flex-row flex-auto gap-2">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                        <span
+                            class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                            [ngClass]="{
+                                'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                'border-surface': value > activeStep
+                            }"
+                        >
+                            <i class="pi pi-user"></i>
+                        </span>
+                    </button>
+                </ng-template>
+            </p-step>
+
+            <p-step [value]="2" class="flex flex-row flex-auto gap-2">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                        <span
+                            class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                            [ngClass]="{
+                                'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                'border-surface': value > activeStep
+                            }"
+                        >
+                            <i class="pi pi-star"></i>
+                        </span>
+                    </button>
+                </ng-template>
+            </p-step>
+
+            <p-step [value]="3" class="flex flex-row flex-auto gap-2">
+                <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                    <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                        <span
+                            class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                            [ngClass]="{
+                                'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                'border-surface': value > activeStep
+                            }"
+                        >
+                            <i class="pi pi-id-card"></i>
+                        </span>
+                    </button>
+                </ng-template>
+            </p-step>
+        </p-step-list>
+
+        <p-step-panels>
+            <p-step-panel [value]="1">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="pannel flex flex-col min-h-[30rem] gap-5">
+                        <div class="grow flex flex-col gap-2 mx-auto w-full max-w-[20rem]">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Create your account</div>
+                            <div class="field">
+                                <input [(ngModel)]="userName" pInputText id="username" type="text" placeholder="Username" fluid required />
+                            </div>
+                            <div class="field">
+                                <input [(ngModel)]="firstName" pInputText id="firstname" type="text" placeholder="First Name" fluid required />
+                            </div>
+                            <div class="field">
+                                <input [(ngModel)]="lastName" pInputText id="lastname" type="text" placeholder="Last Name" fluid required />
+                            </div>
+                            <div class="field">
+                                <input [(ngModel)]="email" pInputText id="email" type="email" placeholder="Email" fluid required />
+                            </div>
+                            <div class="field">
+                                <p-password [(ngModel)]="password" placeholder="Password" fluid required />
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <p-button (onClick)="onNextStep1(activateCallback)" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                        </div>
+                    </div>
+                </ng-template>
+            </p-step-panel>
+
+            <p-step-panel [value]="2">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="pannel flex flex-col gap-5 w-full  ">
+                        <div class="grow flex flex-col gap-2 mx-auto w-full max-w-[32rem]">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Choose your interests</div>
+                            <div class="flex flex-wrap justify-center gap-4">
+                                <p-togglebutton [(ngModel)]="option1" onLabel="Pop" offLabel="Pop" />
+                                <p-togglebutton [(ngModel)]="option2" onLabel="Rock" offLabel="Rock" />
+                                <p-togglebutton [(ngModel)]="option3" onLabel="Hip-hop" offLabel="Hip hop" />
+                            </div>
+                            <div class="flex flex-wrap justify-center gap-4">
+                                <p-togglebutton [(ngModel)]="option4" onLabel="R&B" offLabel="R&B" />
+                                <p-togglebutton [(ngModel)]="option5" onLabel="Jazz" offLabel="Jazz" />
+                                <p-togglebutton [(ngModel)]="option6" onLabel="EDM" offLabel="EDM" />
+                                <p-togglebutton [(ngModel)]="option7" onLabel="Classical" offLabel="Classical" />
+                            </div>
+                            <div class="flex flex-wrap justify-center gap-4">
+                                <p-togglebutton [(ngModel)]="option8" onLabel="Indie" offLabel="Indie" />
+                                <p-togglebutton [(ngModel)]="option9" onLabel="Ballad" offLabel="Ballad" />
+                                <p-togglebutton [(ngModel)]="option10" onLabel="K-Pop" offLabel="K-Pop" />
+                            </div>
+                        </div>
+                        <div class="pannel-button-space-between flex justify-between w-full">
+                            <p-button class="block" (onClick)="activateCallback(1)" label="Back" severity="secondary" icon="pi pi-arrow-left" />
+                            <p-button class="block" (onClick)="onSignUp()" label="Next" icon="pi pi-arrow-right" iconPos="right" />
+                        </div>
+                    </div>
+                </ng-template>
+            </p-step-panel>
+
+            <p-step-panel [value]="3">
+                <ng-template #content let-activateCallback="activateCallback">
+                    <div class="pannel flex flex-col gap-5">
+                        <div class="grow flex flex-col gap-2 mx-auto w-full max-w-[24rem]">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Account created successfully</div>
+                            <div class="flex flex-row text-center gap-5 justify-center">
+                                <img class="image" alt="logo" src="https://primefaces.org/cdn/primeng/images/stepper/content.svg" />
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-step-panel>
+        </p-step-panels>
+    </p-stepper>
+</div>
