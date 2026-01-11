@@ -1,0 +1,26 @@
+<div class="flex justify-center items-center w-[50%] min-h-[80vh] justify-self-center mt-10">
+    <div class="surface-card p-4 shadow-2 border-round w-full">
+        <div class="text-center mb-5">
+            <div class="text-900 text-3xl font-medium mb-3">Welcome Back</div>
+            <span class="text-600 font-medium line-height-3">Don't have an account?</span>
+            <a routerLink="/sign-up" class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Sign up today!</a>
+        </div>
+
+        <div>
+            <label for="username" class="block text-900 font-medium mb-2">Username</label>
+            <input id="username" type="text" pInputText class="w-full mb-3" [(ngModel)]="userName" placeholder="Username" />
+
+            <label for="password" class="block text-900 font-medium mb-2">Password</label>
+            <p-password id="password" [(ngModel)]="password" [toggleMask]="true" styleClass="w-full mb-3" [inputStyle]="{'width':'100%'}" placeholder="Password" [feedback]="false"></p-password>
+
+            <div class="flex align-items-center justify-content-between mb-6">
+                <div class="flex align-items-center">
+                    <!-- Remember me checkbox could go here -->
+                </div>
+                <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password?</a>
+            </div>
+
+            <button pButton pRipple label="Sign In" icon="pi pi-user" class="w-full" (click)="onSignIn()"></button>
+        </div>
+    </div>
+</div>

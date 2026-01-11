@@ -14,7 +14,7 @@ export interface IApiOptions {
     urlReplacements?: IObject;
     body?: any;
     headers?: HttpHeaders | {
-      [header: string]: string | string[];
+        [header: string]: string | string[];
     };
     reportProgress?: boolean;
     observe?: 'events';
@@ -30,6 +30,11 @@ export interface ApiResult {
 
 export enum Endpoints {
     TEST = '/auth/profile',
+
+    // Auth
+    AUTH_SIGN_UP = '/Auth/sign-up',
+    AUTH_SIGN_IN = '/Auth/sign-in',
+    AUTH_LOGOUT = '/Auth/logout',
 
     ANONYMOUS_SUBSCRIPTION = '/AnonymousSubscription',
 

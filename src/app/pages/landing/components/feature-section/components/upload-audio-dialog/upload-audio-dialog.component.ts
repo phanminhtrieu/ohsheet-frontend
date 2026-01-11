@@ -50,7 +50,7 @@ export class UploadAudioDialogComponent {
   buttonUploadDisable = true;
   buttonUploadLoading = false;
 
-  buttonNextToStepTwoDisable = true; 
+  buttonNextToStepTwoDisable = true;
 
   uploadedFiles: any[] = [];
   firstFileUploaded: any;
@@ -144,8 +144,7 @@ export class UploadAudioDialogComponent {
   }
 
   onSave() {
-    // const userId = this.localStorageService.getItem(LocalHostConstant.USER) || 'anonymousUser';
-    const userId = "BEF5A860-BE1C-4E80-09F2-08DC758EFCB7";
+    const userId = this.localStorageService.getItem(LocalHostConstant.USER).id;
     const transcriptionId = this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
 
     if (transcriptionId) {
