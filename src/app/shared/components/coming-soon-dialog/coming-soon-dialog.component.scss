@@ -1,0 +1,13 @@
+.coming-soon-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    img {
+        width: 100%;
+        height: auto;
+        max-height: 400px;
+        /* Optional: limit height if needed */
+    }
+}

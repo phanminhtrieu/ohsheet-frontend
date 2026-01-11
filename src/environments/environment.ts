@@ -1,5 +1,5 @@
 const basePath = '';
-export const apiBasePath = 'http://localhost:4321/';
+export const apiBasePath = 'http://localhost:1234/';
 
 export const environment = {
   production: false,

@@ -10,17 +10,22 @@ import { DialogModule } from 'primeng/dialog';
 import { TextareaModule } from 'primeng/textarea';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
+import { UploadAudioDialogComponent } from './components/upload-audio-dialog/upload-audio-dialog.component';
+import { ComingSoonDialogComponent } from 'app/shared/components/coming-soon-dialog/coming-soon-dialog.component';
 
 @Component({
   selector: 'app-feature-section',
   standalone: true,
   imports: [
-    CommonModule, 
-    ButtonModule, 
-    DialogModule, 
-    TextareaModule, 
+    CommonModule,
+    ButtonModule,
+    DialogModule,
+    TextareaModule,
     FormsModule,
-    ProgressSpinnerModule ],
+    ProgressSpinnerModule,
+    UploadAudioDialogComponent,
+    ComingSoonDialogComponent
+  ],
   templateUrl: './feature-section.component.html',
   styleUrl: './feature-section.component.scss'
 })
@@ -33,10 +38,11 @@ export class FeatureSectionComponent {
   feedbackDialogVisible = false;
   comingSoonDialogVisible = false;
   inputEmailFirstDialogVisible = false;
+  uploadAudioDialogVisible = false;
 
 
   isLoading!: any;
-  
+
   feedback!: string;
   anonymousUser = {
     name: null,
@@ -68,17 +74,17 @@ export class FeatureSectionComponent {
 
   sendFeedback() {
     const anonymousUser = this.localStorageService.getItem("anonymousUser");
-    
+
     if (!anonymousUser) {
       this.scrollToWelcome.emit();
       this.feedbackDialogVisible = false;
       this.inputEmailFirstDialogVisible = true;
 
       return;
-    } 
-    
+    }
+
     this.anonymousUser = { ...anonymousUser, message: this.feedback };
-    
+
     if (this.anonymousUser.message) {
       this.anonymousSubscriptionService.sendFeedback(this.anonymousUser)
         .pipe(
@@ -90,12 +96,12 @@ export class FeatureSectionComponent {
         .subscribe(() => this.feedback = '');
     }
   }
-  
+
   inputImg() {
     this.comingSoonDialogVisible = true
   }
 
   inputAudio() {
-    this.comingSoonDialogVisible = true
+    this.uploadAudioDialogVisible = true
   }
 }

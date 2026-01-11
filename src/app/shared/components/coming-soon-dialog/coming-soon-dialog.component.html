@@ -1,0 +1,13 @@
+<p-dialog
+  header="Sorry everyone, I’ll be here soon 😭"
+  [visible]="visible"
+  (visibleChange)="updateVisibility($event)"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div class="coming-soon-content">
+    <img src="/assets/feature-sections/coming-soon.svg" alt="Coming Soon" />
+  </div>
+</p-dialog>

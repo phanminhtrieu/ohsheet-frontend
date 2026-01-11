@@ -5,17 +5,19 @@ import { AvatarModule } from 'primeng/avatar';
 import { NgFor } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
+import { ComingSoonDialogComponent } from '../coming-soon-dialog/coming-soon-dialog.component';
 
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
   imports: [
-    MenubarModule, 
-    ButtonModule, 
-    AvatarModule, 
+    MenubarModule,
+    ButtonModule,
+    AvatarModule,
     NgFor,
-    DialogModule],
+    DialogModule,
+    ComingSoonDialogComponent],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
 })
@@ -30,7 +32,7 @@ export class TopbarComponent {
       // { label: 'About', icon: 'pi pi-info-circle', routerLink: '/about' },
     ];
   }
-  
+
   showComingSoonDialog() {
     this.comingSoonDialogVisible = true
   }
