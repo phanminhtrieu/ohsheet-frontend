@@ -5,149 +5,182 @@
   [modal]="true"
   [style]="{ width: '50%', height: '90%' }"
 >
-  <p-stepper [value]="1" class="basis-[50rem]" [linear]="true">
-    <p-step-list>
-      <p-step [value]="1">Tải file</p-step>
-      <p-step [value]="2">Demo</p-step>
-      <p-step [value]="3">Tải về</p-step>
-    </p-step-list>
-    <p-step-panels>
-      <p-step-panel [value]="1">
-        <ng-template #content let-activateCallback="activateCallback">
-          <div class="flex flex-col gap-6 items-center justify-center w-full">
-            <!-- Upload -->
-            <div class="flex flex-row gap-5 w-full items-center">
-              <div class="w-[70%]">
-                <p-fileupload
-                  #fu
-                  mode="advanced"
-                  chooseLabel="Chọn file"
-                  cancelLabel="Hủy bỏ"
-                  chooseIcon="pi pi-upload"
-                  name="demo[]"
-                  url="https://www.primefaces.org/cdn/api/upload.php"
-                  accept="audio/*"
-                  maxFileSize="100000000000000000"
-                  [showUploadButton]="false"
-                  (onUpload)="onUpload($event)"
-                  (onProgress)="onProgress($event)"
-                  (onSelect)="onSelect($event)"
-                  (onClear)="onClear($event)"
-                />
-              </div>
-
-              <!-- Upload button -->
-              <div class="w-[20%]">
-                <p-button
-                  label="Upload"
-                  icon="pi pi-send"
-                  (onClick)="startFakeProgress(2000); fu.upload()"
-                  severity="success"
-                  [disabled]="buttonUploadDisable"
-                  styleClass="w-full"
-                  [raised]="true"
-                  [loading]="buttonUploadLoading"
-                />
-              </div>
-            </div>
-
-            <!-- Progress bar -->
-            <div class="w-full">
-              <p-progressBar
-                [value]="uploadProgress"
-                *ngIf="uploadProgress > 0"
-                styleClass="!w-full"
-              ></p-progressBar>
-            </div>
-
-            <!-- Uploaded Item -->
-            <div
-              *ngIf="firstFileUploaded"
-              class="grow border-chec-blue w-full flex flex-row gap-5"
-            >
-              <img
-                src="/assets/icons/treble-clef-dark.svg"
-                alt=""
-                class="w-[80px]"
-              />
-              <div class="flex flex-col">
-                <div class="text-xl font-semibold">a</div>
-                <div class="text-xl font-semibold">
-                  Name:
-                  <span class="text-2xl font-bold text-stone-800">{{
-                    firstFileUploaded.name
-                  }}</span>
+  <ng-container *ngIf="visible">
+    <p-stepper [value]="1" class="basis-[50rem]" [linear]="true">
+      <p-step-list>
+        <p-step [value]="1">Tải file</p-step>
+        <p-step [value]="2">Demo</p-step>
+        <p-step [value]="3">Tinh chỉnh</p-step>
+      </p-step-list>
+      <p-step-panels>
+        <p-step-panel [value]="1">
+          <ng-template #content let-activateCallback="activateCallback">
+            <div class="flex flex-col gap-6 items-center justify-center w-full">
+              <!-- Upload -->
+              <div class="flex flex-row gap-5 w-full items-center">
+                <div class="w-[70%]">
+                  <p-fileupload
+                    #fu
+                    mode="advanced"
+                    chooseLabel="Chọn file"
+                    cancelLabel="Hủy bỏ"
+                    chooseIcon="pi pi-upload"
+                    name="demo[]"
+                    customUpload="true"
+                    (uploadHandler)="onUpload($event)"
+                    accept="audio/*"
+                    maxFileSize="100000000000000000"
+                    [showUploadButton]="false"
+                    (onProgress)="onProgress($event)"
+                    (onSelect)="onSelect($event)"
+                    (onClear)="onClear($event)"
+                  />
                 </div>
-                <div class="text-xl font-semibold">
-                  Size {{ firstFileUploaded.size }}
+  
+                <!-- Upload button -->
+                <div class="w-[20%]">
+                  <p-button
+                    label="Upload"
+                    icon="pi pi-send"
+                    (onClick)="fu.upload()"
+                    severity="success"
+                    [disabled]="buttonUploadDisable"
+                    styleClass="w-full"
+                    [raised]="true"
+                    [loading]="buttonUploadLoading"
+                  />
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Next button -->
-          <div class="absolute right-[20px] bottom-[20px]">
-            <p-button
-              label="Next"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-              (onClick)="activateCallback(2)"
-              [disabled]="buttonNextToStepTwoDisable"
-            />
-          </div>
-        </ng-template>
-      </p-step-panel>
-
-      <p-step-panel [value]="2">
-        <ng-template #content let-activateCallback="activateCallback">
-          <div class="flex flex-col">
-            <div class="grow flex flex-row h-[370px]">
-              <app-sheet-renderer></app-sheet-renderer>
-              <div class="flex flex-col">
-                <p-button>abc</p-button>
-                <p-button>abc</p-button>
-                <p-button>abc</p-button>
-                <p-button>abc</p-button>
+  
+              <!-- Progress bar -->
+              <div class="w-full">
+                <p-progressBar
+                  [value]="uploadProgress"
+                  *ngIf="uploadProgress > 0"
+                  styleClass="!w-full"
+                ></p-progressBar>
+              </div>
+  
+              <!-- Uploaded Item -->
+              <div
+                *ngIf="firstFileUploaded"
+                class="grow border-chec-blue w-full flex flex-row gap-5 items-center"
+              >
+                <img
+                  src="/assets/icons/treble-clef-dark.svg"
+                  alt=""
+                  class="w-[80px]"
+                />
+                <div class="flex flex-col">
+                  <div class="text-xl font-semibold">a</div>
+                  <div class="text-xl font-semibold">
+                    Name:
+                    <span class="text-2xl font-bold text-stone-800">{{
+                      firstFileUploaded.name
+                    }}</span>
+                  </div>
+                  <div class="text-xl font-semibold">
+                    Size {{ firstFileUploaded.size }}
+                  </div>
+                </div>
+                <div class="ml-auto">
+                  <p-button
+                    icon="pi pi-times"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="danger"
+                    (onClick)="onRemoveFile()"
+                  />
+                </div>
               </div>
             </div>
-
-            <!-- BACK btn -->
-            <div class="absolute left-[20px] bottom-[20px]">
-              <p-button
-                label="Back"
-                severity="secondary"
-                icon="pi pi-arrow-left"
-                (onClick)="activateCallback(1)"
-              />
-            </div>
-
-            <!-- NEXT btn -->
+  
+            <!-- Next button -->
             <div class="absolute right-[20px] bottom-[20px]">
               <p-button
                 label="Next"
                 icon="pi pi-arrow-right"
                 iconPos="right"
-                (onClick)="activateCallback(3)"
+                (onClick)="activateCallback(2)"
+                [disabled]="buttonNextToStepTwoDisable"
               />
             </div>
-          </div>
-        </ng-template>
-      </p-step-panel>
+          </ng-template>
+        </p-step-panel>
+  
+        <p-step-panel [value]="2">
+          <ng-template #content let-activateCallback="activateCallback">
+            <div class="flex flex-col">
+              <div class="grow flex flex-row h-[370px]">
+                <app-sheet-renderer></app-sheet-renderer>
+                <div class="flex flex-col">
+                  <!-- <p-button>abc</p-button>
+                  <p-button>abc</p-button>
+                  <p-button>abc</p-button>
+                  <p-button>abc</p-button> -->
+                </div>
+              </div>
+  
+              <!-- BACK btn -->
+              <div class="absolute left-[20px] bottom-[20px]">
+                <p-button
+                  label="Back"
+                  severity="secondary"
+                  icon="pi pi-arrow-left"
+                  (onClick)="activateCallback(1)"
+                />
+              </div>
+  
+              <!-- NEXT btn -->
+              <div class="absolute right-[20px] bottom-[20px]">
+                <p-button
+                  label="Next"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  (onClick)="activateCallback(3)"
+                />
+              </div>
+            </div>
+          </ng-template>
+        </p-step-panel>
+  
+        <p-step-panel [value]="3">
+          <ng-template #content let-activateCallback="activateCallback">
+            <div class="flex flex-col h-48">
+              <div
+                class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium">
+                Content III
+              </div>
+            </div>
+            <div class="flex pt-6 justify-end">
+              <p-button label="Lưu" icon="pi pi-save" (onClick)="openSaveDialog()" />
+            </div>
+            <div class="absolute left-[20px] bottom-[20px]">
+              <p-button
+                label="Back"
+                severity="secondary"
+                icon="pi pi-arrow-left"
+                (onClick)="activateCallback(2)"
+              />
+            </div>
+          </ng-template>
+        </p-step-panel>
+      </p-step-panels>
+    </p-stepper>
+  </ng-container>
+</p-dialog>
 
-      <p-step-panel [value]="3">
-        <ng-template #content let-activateCallback="activateCallback">
-          <div class="border-check-red"></div>
-
-          <div class="absolute left-[20px] bottom-[20px]">
-            <p-button
-              label="Back"
-              severity="secondary"
-              icon="pi pi-arrow-left"
-              (onClick)="activateCallback(2)"
-            />
-          </div>
-        </ng-template>
-      </p-step-panel>
-    </p-step-panels>
-  </p-stepper>
+<p-dialog header="Lưu bản nhạc" [modal]="true" [(visible)]="showSaveDialog" [style]="{ width: '25rem' }">
+    <div class="flex items-center gap-4 mb-4">
+        <label for="title" class="font-semibold w-24">Tiêu đề</label>
+        <input pInputText id="title" class="flex-auto" autocomplete="off" [(ngModel)]="title" />
+    </div>
+    <div class="flex items-center gap-4 mb-8">
+        <label for="description" class="font-semibold w-24">Mô tả</label>
+        <textarea pInputText id="description" class="flex-auto" autocomplete="off" [(ngModel)]="description" rows="5"></textarea>
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Hủy" severity="secondary" (onClick)="showSaveDialog = false" />
+        <p-button label="Lưu" (onClick)="onSave()" [disabled]="!title" />
+    </div>
 </p-dialog>

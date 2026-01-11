@@ -1,6 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import VexFlow, { Factory, EasyScore, Voice, Formatter, Stave, StaveNote } from 'vexflow';
+import {
+  start as ToneStart,
+  getTransport,
+  PolySynth,
+  AMSynth,
+  Part
+} from "tone";
+import { MidiService } from 'app/core/services/midi.service';
+import { LocalStorageService } from 'app/core/services/local-storage.service';
+import { Midi } from "@tonejs/midi";
+import { Subject, takeUntil } from 'rxjs';
+import { LocalHostConstant } from 'app/shared/constants';
 
 interface Note {
   start: number;
@@ -18,89 +30,55 @@ interface Note {
   templateUrl: './sheet-renderer.component.html',
   styleUrl: './sheet-renderer.component.scss'
 })
-export class SheetRendererComponent {
+export class SheetRendererComponent implements OnDestroy {
   @ViewChild('sheetContainer', { static: true }) sheetContainer!: ElementRef<HTMLDivElement>;
+  @Input() chunkSize: number = 8;
 
-  ngOnInit(): void {
-    // this.renderSheet();
-    // this.renderNotesGrouped([
-    //   ["[g4,e4,d4]/q"],
-    //   ["d4/q"],
-    //   ["e4/q"],
-    //   ["[c5,d4]/q"],
-    //   ["g4/q"],
-    //   ["[b3,c3]/q"]
-    // ]);
-    console.log("Xap xi:", Math.abs(0.5108390022675737 - 0.4992290249433107));
-    
-    const previewNotes: [number, number, number][] = [
-      [7.004668027210885,7.225257596371883,72], 
-      [7.004668027210885,7.422627210884354,60],
-      [6.49382902494331,6.714418594104308,74],
-      [6.49382902494331,6.9930580498866215,62],
-      [6.006209977324263,6.482219047619048,64],
-      [5.505697052154195,5.982990022675737,65],
-      [5.006468027210884,5.494087074829932,67],
-      [4.495629024943311,4.9832480725623585,69],
-      [3.9963999999999995,4.484019047619047,71],
+  constructor(
+    private midiService: MidiService,
+    private localStorageService: LocalStorageService
+  ) { }
 
-      [3.4958870748299318,3.973180045351474,72],
-      [2.996658049886621,3.484277097505669,71],
-      [2.4974290249433104,2.973438095238095,69],
-      [2.009809977324263,2.4858190476190476,67],
-      [1.509297052154195,1.986590022675737,65],
-      [1.0100680272108844,1.486077097505669,64],
-      [0.5108390022675737,0.9868480725623583,62],
-      [0.4992290249433107,0.6617687074829932,74],
-      [0.011609977324263039,0.47600907029478456,60],
-      [0.011609977324263039,0.16253968253968254,72], 
-    ];
-    
+  allNotePositions: any[] = [];
+  cursors: any[] = [];
+  animationFrameId?: number;
+  synth!: any;
+  part!: any;
+  isPlaying = false;
+  startTime = 0;
 
-    // previewNotes.sort((a, b) => a[0] - b[0]);
-    // console.log("🍺", previewNotes);
+  previewNotes: [number, number, number][] = []
+  private destroy$ = new Subject<void>();
 
+  async ngOnInit(): Promise<void> {
+    const transcriptionId = this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
+    if (transcriptionId) {
+      this.midiService.loadMidi(transcriptionId);
+    }
 
-    // let notes: string[] = previewNotes.map(n => this.midiToVexflowKey(n[2] as number));
-
-
-    // const notes = this.convertPreviewNotesToVexflowNotes(previewNotes, this.midiToVexflowKey)
-    // console.log("🙃", notes);
-
-    // this.renderNotes(notes, true);
-
-    // this.renderNotesFromPreview(previewNotes, 8);
-    
-
-    this.renderNotes(previewNotes, true);
+    this.midiService.midi$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(notes => {
+        if (notes && notes.length > 0) {
+          this.previewNotes = notes;
+          console.log("🎵 Loaded MIDI notes:", this.previewNotes);
+          this.renderNotes(this.previewNotes, true);
+        }
+      });
   }
 
-  renderSheet() {
-    // Tạo Factory
-    const vf = new Factory({
-      renderer: { elementId: 'sheet-container', width: 600, height: 200 },
-    });
-
-    const score = vf.EasyScore();
-    const system = vf.System();
-
-    // Thêm khuông nhạc
-    system
-      .addStave({
-        voices: [
-          score.voice(score.notes('C#5/q, B4, A4, G#4', { stem: 'up' })),
-          score.voice(score.notes('C#4/h, C#4', { stem: 'down' })),
-        ],
-      })
-      .addClef('treble');
-
-    vf.draw();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   renderNotes(notesArray: [number, number, number][], isDemo: boolean) {
+    // reset trước khi render lại
+    this.allNotePositions = [];
+
     // Cấu hình
     const staveWidth = 450;  // chiều rộng mỗi dòng khuông
-    const chunkSize = 8;     // số nốt tối đa mỗi dòng
+    const chunkSize = this.chunkSize;     // số nốt tối đa mỗi dòng
     let yOffset = 20;        // vị trí Y bắt đầu
     const xOffset = 35;
     const lines = Math.ceil(notesArray.length / chunkSize);
@@ -116,33 +94,22 @@ export class SheetRendererComponent {
 
     // Chuyển từ tín hiệu MIDI -> ký hiệu chữ c, d, e, ...
     const vexflowNotes = notesArray.map(([start, end, pitch]) => this.midiToVexflowKey(start, end, pitch));
-    const groupedNotesString =  this.notesToString(vexflowNotes);
-    const groupedNotesArray = groupedNotesString.split(", ");
+    const vexflowSortedNotes = vexflowNotes.sort((a, b) => a.start - b.start);
 
-    console.log("✨", vexflowNotes);
-    console.log("✨ 2", groupedNotesString.split(", "));
+    const groupedNotesString = this.notesToString(vexflowSortedNotes);
+    const groupedNotesArray = groupedNotesString.split(", ");
 
     let line = 1;
     // Chia nốt thành từng chunk
     for (let i = 0; i < groupedNotesArray.length; i += chunkSize) {
-      const chunk = groupedNotesArray.slice(i, i + chunkSize); 
-      // const chunk = chunkObjects.map(chunkObject => chunkObject.note);
-      
-      console.log("😶‍🌫️",chunk);
+      const chunk = groupedNotesArray.slice(i, i + chunkSize);
 
       const voice = new Voice();
       voice.setMode(Voice.Mode.SOFT); // Không quan tâm nó có bao nhiêu phách trong một ô nhịp
 
-      try {
-        // Add note vào 1 voice
-        // const tickables = score.notes(this.notesToString(chunk));
-        // const tickables = score.notes(this.notesToString(chunkObjects));
-        const tickables = score.notes(chunk.join(", "));
-        voice.addTickables(tickables);
-        
-      } catch (e) {
-        console.error("Lỗi format note: ", chunk, e);
-      }
+      // Add note vào 1 voice
+      const tickables = score.notes(chunk.join(", "));
+      voice.addTickables(tickables);
 
       // Tạo stave thủ công
       const stave = new Stave(xOffset, yOffset, staveWidth);
@@ -155,23 +122,49 @@ export class SheetRendererComponent {
 
       const voices = [voice];
 
-      // Căn đều các nốt trên stave
       this.formatVoices(voices, stave);
-
-      // Vẽ voice lên stave
-      // voice.draw(context, stave);
       this.drawVoicesOnStave(context, stave, voices);
+
+      // Ghi lại vị trí từng nốt
+      const notePositions = tickables.map((n, idx) => ({
+        start: vexflowSortedNotes[i + idx]?.start ?? 0,
+        end: vexflowSortedNotes[i + idx]?.end ?? 0,
+        x: n.getAbsoluteX(),
+        y: yOffset,
+      }));
+
+      this.allNotePositions.push(...notePositions);
+
+      // 🟥 Tạo thanh cursor cho dòng hiện tại
+      const cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      cursor.setAttribute("x1", xOffset.toString());
+      cursor.setAttribute("x2", xOffset.toString());
+      cursor.setAttribute("y1", yOffset.toString());
+      cursor.setAttribute("y2", (yOffset + staveHeight - 20).toString());
+      cursor.setAttribute("stroke", "red");
+      cursor.setAttribute("stroke-width", "2");
+
+      const svg = document.querySelector("#sheet-container svg");
+      svg?.appendChild(cursor);
+
+      // Lưu để animate theo chunk
+      this.cursors.push(cursor);
+
 
       // Tăng yOffset cho dòng tiếp theo
       yOffset += staveHeight;
       line = line + 1;
     }
 
-    // Cuối cùng vẽ Factory
     vf.draw();
   }
 
-  midiToVexflowKey(startTime: number, endTime: number, pitch: number): {start: number, end: number, note :string } {
+  play() {
+    this.playMidi(this.previewNotes);
+
+  }
+
+  midiToVexflowKey(startTime: number, endTime: number, pitch: number): { start: number, end: number, note: string } {
     const noteNames = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"];
     const octave = Math.floor(pitch / 12) - 1;
     const name = noteNames[pitch % 12];
@@ -181,8 +174,8 @@ export class SheetRendererComponent {
       note: `${name}${octave}`
     };
   }
-  
-  notesToString(notes: any, tolerance = 0.2): string {
+
+  notesToString(notes: any, tolerance = 0.1): string {
     if (!notes || notes.length === 0) return "";
 
     const result: string[] = [];
@@ -192,13 +185,7 @@ export class SheetRendererComponent {
       const note = notes[i];
       const last = currentGroup[currentGroup.length - 1];
 
-      if (i > 0) {
-        console.log("🤬", Math.abs(note.start - last.start));
-
-      }
-      
       if (last && Math.abs(note.start - last.start) <= tolerance) {
-        console.log("vao 🥶");
         // cùng thời điểm -> thêm vào group
         currentGroup.push(note);
       } else {
@@ -218,7 +205,6 @@ export class SheetRendererComponent {
 
     // push group cuối cùng
     if (currentGroup.length > 0) {
-      console.log("group: ", currentGroup);
 
       if (currentGroup.length === 1) {
         result.push(`${currentGroup[0].note}/q`);
@@ -227,8 +213,6 @@ export class SheetRendererComponent {
         result.push(`(${chordNotes})/q`);
       }
     }
-
-    console.log("🕵️",result.join(", "));
 
     return result.join(", ");
   }
@@ -243,12 +227,95 @@ export class SheetRendererComponent {
     stave: Stave,
     voices: Voice | Voice[],
   ) {
-    // Chắc chắn voices là mảng
+    // Đảm bảo voices là mảng
     const voiceArray = Array.isArray(voices) ? voices : [voices];
-  
+
     // Vẽ từng voice lên stave
     for (const voice of voiceArray) {
       voice.draw(context, stave);
     }
+  }
+
+  groupNoteByStartTime(currentGroup: any, currentNote: any, last: any) {
+
+  }
+
+  async playMidi(notesArray: [number, number, number][]) {
+    if (this.isPlaying) return;
+
+    const transport = getTransport();
+    await ToneStart();
+
+    // Dùng PolySynth với AMSynth
+    this.synth = new PolySynth(AMSynth).toDestination();
+
+    transport.cancel(0);
+    transport.stop();
+    transport.position = 0;
+
+    // Dữ liệu toneNotes dựa trên previewNotes / allNotePositions
+    const toneNotes = this.previewNotes.map(([start, end, midi]) => {
+      const noteObj = this.midiToVexflowKey(start, end, midi);
+      return {
+        time: start,
+        duration: end - start,
+        name: noteObj.note.toUpperCase(), // ví dụ "C4", "D#5", v.v.
+      };
+    });
+
+    this.part = new Part((time, note: any) => {
+      this.synth.triggerAttackRelease(note.name, note.duration, time);
+    }, toneNotes).start(0);
+
+    transport.start();
+    this.isPlaying = true;
+    this.startTime = transport.seconds;
+    this.animateCursorLoop();
+  }
+
+  stopMidi() {
+    if (!this.isPlaying) return;
+
+    const transport = getTransport();
+    transport.stop();
+    this.part.stop();
+    this.synth.releaseAll();
+
+    this.cursors.forEach(c => (c.style.display = "none"));
+    if (this.cursors.length > 0) {
+      const first = this.cursors[0];
+      first.style.display = "block";
+      first.setAttribute("x1", "35");
+      first.setAttribute("x2", "35");
+    }
+
+    cancelAnimationFrame(this.animationFrameId!);
+    this.isPlaying = false;
+  }
+
+  private animateCursorLoop() {
+    if (!this.isPlaying) return;
+
+    const transport = getTransport();
+    const currentTime = transport.seconds - this.startTime;
+
+    const currentNote = this.allNotePositions.find(
+      n => currentTime >= n.start && currentTime < n.end
+    );
+
+    if (currentNote) {
+      const currentLine = Math.floor(currentNote.y / 100);
+      this.cursors.forEach((c, idx) => {
+        c.style.display = idx === currentLine ? "block" : "none";
+      });
+
+      const cursor = this.cursors[currentLine];
+      if (cursor) {
+        cursor.setAttribute("x1", currentNote.x.toString());
+        cursor.setAttribute("x2", currentNote.x.toString());
+      }
+    }
+
+    this.animationFrameId = requestAnimationFrame(() => this.animateCursorLoop());
   }
 }

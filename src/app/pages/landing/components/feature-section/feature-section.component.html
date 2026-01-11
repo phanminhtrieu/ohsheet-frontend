@@ -108,14 +108,9 @@
     [(visible)]="uploadAudioDialogVisible"
   ></app-upload-audio-dialog>
 
-  <p-dialog
-    header="Xin lũi mọi người, tớ sẽ tới sớm thôi 😭"
+  <app-coming-soon-dialog
     [(visible)]="comingSoonDialogVisible"
-    [modal]="true"
-    [style]="{ width: '600px' }"
-  >
-    <img src="/assets/feature-sections/coming-soon.svg" alt="" />
-  </p-dialog>
+  ></app-coming-soon-dialog>
 
   <p-dialog
     header="Nếu bạn muốn cho mình một lời nhắn thì hãy cho mình biết email của bạn trước nha 😘"

@@ -18,12 +18,25 @@ export interface IApiOptions {
     };
     reportProgress?: boolean;
     observe?: 'events';
-    responseType?: 'json';
+    responseType?: 'json' | 'arraybuffer';
     withCredentials?: boolean;
+}
+
+export interface ApiResult {
+    isSucceeded: boolean;
+    message?: string;
+    resultObj?: any;
 }
 
 export enum Endpoints {
     TEST = '/auth/profile',
 
     ANONYMOUS_SUBSCRIPTION = '/AnonymousSubscription',
+
+    // Music Transcription
+    MUSIC_TRANSCRIPTION_TRANSCRIBE = '/MusicTranscription/transcribe',
+    MUSIC_TRANSCRIPTION_GET_MIDI = '/MusicTranscription/:id/midi',
+
+    // Music Sheet
+    MUSIC_SHEET = '/MusicSheet',
 }

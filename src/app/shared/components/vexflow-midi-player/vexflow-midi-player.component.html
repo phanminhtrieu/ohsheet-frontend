@@ -1,0 +1,11 @@
+<div class="midi-player">
+  <div id="sheet-container" class="border rounded shadow bg-white"></div>
+  <div class="controls flex justify-center gap-3 mt-2">
+    <button
+      (click)="togglePlay()"
+      class="px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
+    >
+      {{ isPlaying ? "⏸ Pause" : "▶️ Play" }}
+    </button>
+  </div>
+</div>
