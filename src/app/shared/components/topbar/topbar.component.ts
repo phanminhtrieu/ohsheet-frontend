@@ -2,12 +2,15 @@ import { Component } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
-import { NgFor } from '@angular/common';
+import { NgFor, CommonModule } from '@angular/common';
 import { MenuItem } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { ComingSoonDialogComponent } from '../coming-soon-dialog/coming-soon-dialog.component';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
+
+import { Observable } from 'rxjs'; // Add import
 
 @Component({
   selector: 'app-topbar',
@@ -16,7 +19,7 @@ import { Router } from '@angular/router';
     MenubarModule,
     ButtonModule,
     AvatarModule,
-    NgFor,
+    CommonModule,
     DialogModule,
     ComingSoonDialogComponent],
   templateUrl: './topbar.component.html',
@@ -25,8 +28,14 @@ import { Router } from '@angular/router';
 export class TopbarComponent {
   items: MenuItem[] = [];
   comingSoonDialogVisible = false;
+  currentUser$: Observable<any>;
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
 
   ngOnInit() {
     this.items = [
@@ -42,5 +51,13 @@ export class TopbarComponent {
 
   navigateToSignUp() {
     this.router.navigate(['/sign-up']);
+  }
+
+  navigateToSignIn() {
+    this.router.navigate(['/sign-in']);
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

@@ -33,6 +33,8 @@ export enum Endpoints {
 
     // Auth
     AUTH_SIGN_UP = '/Auth/sign-up',
+    AUTH_SIGN_IN = '/Auth/sign-in',
+    AUTH_LOGOUT = '/Auth/logout',
 
     ANONYMOUS_SUBSCRIPTION = '/AnonymousSubscription',
 

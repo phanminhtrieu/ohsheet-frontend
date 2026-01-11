@@ -9,19 +9,27 @@
     </div>
   </ng-template>
 
-  <div class="flex gap-4">
-    <p-button
-      styleClass="!px-8"
-      label="Sign In"
-      (click)="showComingSoonDialog()"
-    />
-    <p-button
-      styleClass="!px-8"
-      label="Sign Up"
-      severity="secondary"
-      (click)="navigateToSignUp()"
-    />
-  </div>
+  <ng-container *ngIf="currentUser$ | async as currentUser; else guestTemplate">
+    <div class="flex items-center gap-3">
+        <span class="font-medium text-black">Welcome, {{ currentUser.firstName }}</span>
+        <p-button label="Log Out" icon="pi pi-sign-out" (click)="logout()" styleClass="p-button-text"></p-button>
+    </div>
+  </ng-container>
+  <ng-template #guestTemplate>
+    <div class="flex gap-4">
+        <p-button
+        styleClass="!px-8"
+        label="Sign In"
+        (click)="navigateToSignIn()"
+        />
+        <p-button
+        styleClass="!px-8"
+        label="Sign Up"
+        severity="secondary"
+        (click)="navigateToSignUp()"
+        />
+    </div>
+  </ng-template>
 </p-menubar>
 
 <app-coming-soon-dialog
