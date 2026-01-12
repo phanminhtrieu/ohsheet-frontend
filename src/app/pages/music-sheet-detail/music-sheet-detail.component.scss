@@ -1,0 +1,3 @@
+.like-row {
+    @apply flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 -mx-2 rounded transition-colors;
+}

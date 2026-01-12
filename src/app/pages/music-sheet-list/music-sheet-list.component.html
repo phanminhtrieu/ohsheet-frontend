@@ -1,0 +1,52 @@
+<div class="min-h-screen bg-gray-100 py-8 px-20 ">
+  <div class="container mx-auto px-4 mt-[100px]">
+    <!-- Page Header -->
+    <div class="mb-20">
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">Music Sheets</h1>
+      
+      <app-search-input
+        [initialValue]="filters.textSearch || ''"
+        [autoFocus]="!!filters.textSearch"
+        (searchChange)="onSearchChange($event)"
+      ></app-search-input>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading$ | async" class="flex justify-center items-center py-20">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+
+    <!-- Music Sheets Grid -->
+    <div *ngIf="!(isLoading$ | async)" class="mb-8">
+      <div *ngIf="(musicSheets$ | async)?.length === 0" class="text-center py-20">
+        <div class="text-gray-400 mb-4">
+          <i class="pi pi-inbox text-6xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">No music sheets found</h3>
+        <p class="text-gray-500">
+          <span *ngIf="filters.textSearch">Try adjusting your search term "{{ filters.textSearch }}"</span>
+          <span *ngIf="!filters.textSearch">Start by searching for music sheets</span>
+        </p>
+      </div>
+
+      <div *ngIf="(musicSheets$ | async) && (musicSheets$ | async)!.length > 0" 
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <app-music-sheet-card
+          *ngFor="let sheet of musicSheets$ | async"
+          [musicSheet]="sheet"
+        ></app-music-sheet-card>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!(isLoading$ | async) && (musicSheets$ | async) && (musicSheets$ | async)!.length > 0" class="flex justify-center">
+      <p-paginator
+        [rows]="filters.pageSize"
+        [totalRecords]="(totalRecords$ | async) || 0"
+        [first]="(filters.pageIndex - 1) * filters.pageSize"
+        [rowsPerPageOptions]="[10, 20, 30, 50]"
+        (onPageChange)="onPageChange($event)"
+      ></p-paginator>
+    </div>
+  </div>
+</div>

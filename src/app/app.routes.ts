@@ -10,5 +10,7 @@ export const routes: Routes = [
   // { path: 'profile', component: ProfileComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'sign-in', component: SignInComponent },
+  { path: 'music-sheets', loadComponent: () => import('./pages/music-sheet-list/music-sheet-list.component').then(m => m.MusicSheetListComponent) },
+  { path: 'music-sheets/:id', loadComponent: () => import('./pages/music-sheet-detail/music-sheet-detail.component').then(m => m.MusicSheetDetailComponent) },
   { path: '**', redirectTo: '' } // fallback route
 ];

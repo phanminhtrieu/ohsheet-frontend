@@ -40,6 +40,7 @@ export class TopbarComponent {
   ngOnInit() {
     this.items = [
       { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
+      { label: 'Sheet', icon: 'pi pi-book', routerLink: '/music-sheets' },
       // { label: 'Features', icon: 'pi pi-star', routerLink: '/features' },
       // { label: 'About', icon: 'pi pi-info-circle', routerLink: '/about' },
     ];

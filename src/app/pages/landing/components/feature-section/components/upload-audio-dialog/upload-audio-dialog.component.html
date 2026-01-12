@@ -179,6 +179,23 @@
         <label for="description" class="font-semibold w-24">Mô tả</label>
         <textarea pInputText id="description" class="flex-auto" autocomplete="off" [(ngModel)]="description" rows="5"></textarea>
     </div>
+    <div class="flex items-center gap-4 mb-8">
+        <label for="thumbnail" class="font-semibold w-24">Thumbnail</label>
+        <div class="flex-auto">
+            <p-fileupload
+                mode="basic"
+                chooseLabel="Chọn ảnh"
+                chooseIcon="pi pi-image"
+                name="thumbnail"
+                accept="image/*"
+                maxFileSize="1000000"
+                (onSelect)="onThumbnailSelect($event)"
+                [auto]="true"
+                customUpload="true"
+                (uploadHandler)="onThumbnailUploadHandler($event)"
+            />
+        </div>
+    </div>
     <div class="flex justify-end gap-2">
         <p-button label="Hủy" severity="secondary" (onClick)="showSaveDialog = false" />
         <p-button label="Lưu" (onClick)="onSave()" [disabled]="!title" />
