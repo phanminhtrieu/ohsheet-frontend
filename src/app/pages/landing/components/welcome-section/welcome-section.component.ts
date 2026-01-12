@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
 import { AuthService } from 'app/core/services/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { emailPatternValidator } from 'app/shared/validators/email.validator';
 import { LocalHostConstant } from 'app/shared/constants';
 import { GalleriaModule } from 'primeng/galleria';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { PositionWrapperComponent } from 'app/shared/components/position-wrapper/position-wrapper.component';
 import { PlayGuideComponent } from './components/play-guide/play-guide.component';
@@ -27,6 +31,8 @@ import { RightBackgroundComponent } from './components/right-background/right-ba
     ReactiveFormsModule,
     ButtonModule,
     InputTextModule,
+    IconFieldModule,
+    InputIconModule,
     DialogModule,
     GalleriaModule,
     PositionWrapperComponent,
@@ -39,7 +45,7 @@ import { RightBackgroundComponent } from './components/right-background/right-ba
   templateUrl: './welcome-section.component.html',
   styleUrl: './welcome-section.component.scss'
 })
-export class WelcomeSectionComponent {
+export class WelcomeSectionComponent implements OnInit {
   @Output() scrollToFeature = new EventEmitter<void>();
 
   images = [
@@ -82,15 +88,25 @@ export class WelcomeSectionComponent {
   formName: FormGroup;
   formEmail: FormGroup;
 
+  searchKeyword: string = '';
+  private searchSubject = new Subject<string>();
+
   constructor(
     private localStorageService: LocalStorageService,
     private authService: AuthService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private router: Router) {
     this.formName = this.fb.group({ name: ['', Validators.required] });
     this.formEmail = this.fb.group({ email: ['', [Validators.required, emailPatternValidator()]] });
   }
 
   ngOnInit(): void {
+    // Check if animation has been shown before
+    const animationShown = this.localStorageService.getItem(LocalHostConstant.WELCOME_ANIMATION_SHOWN);
+    if (animationShown) {
+      this.skipAnimations();
+    }
+
     // Check localStorage for authenticated user first
     const storedUser = this.localStorageService.getItem(LocalHostConstant.USER);
 
@@ -131,6 +147,49 @@ export class WelcomeSectionComponent {
         }
       }
     });
+
+    // Setup debounced search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(keyword => {
+      if (keyword && keyword.trim().length > 0) {
+        // User searched, so they "found the sheet". Save state.
+        this.localStorageService.setItem(LocalHostConstant.WELCOME_ANIMATION_SHOWN, 'true');
+
+        this.router.navigate(['/music-sheets'], {
+          queryParams: { search: keyword.trim() }
+        });
+      }
+    });
+  }
+
+  skipAnimations() {
+    this.playGuideVisible = false;
+    this.welcomeBoxVisible = true;
+    this.guideBoxVisible = true;
+    this.leftBackgroundVisible = true;
+    this.rightBackgroundVisible = true;
+    this.mainButtonVisible = true;
+    this.mainButtonSoftVisible = true;
+
+    // Hide pointers as everything is visible
+    this.pointerWelcomeBoxVisible = false;
+    this.pointerGuideBoxVisible = false;
+    this.hideWelcomeBoxPointer = true;
+    this.hideGuideBoxPointer = true;
+
+    // Remove play guide element if it exists
+    setTimeout(() => {
+      const element = document.getElementById("play-guide");
+      if (element) {
+        element.remove();
+      }
+    }, 0);
+  }
+
+  onSearchKeywordChange(): void {
+    this.searchSubject.next(this.searchKeyword);
   }
 
   subscribe(): void {
@@ -192,6 +251,9 @@ export class WelcomeSectionComponent {
     }
 
     this.mainButtonVisible = true;
+
+    // Animation sequence complete, save state
+    this.localStorageService.setItem(LocalHostConstant.WELCOME_ANIMATION_SHOWN, 'true');
   }
 
   onScrollToFeature() {

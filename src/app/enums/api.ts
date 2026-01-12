@@ -20,6 +20,7 @@ export interface IApiOptions {
     observe?: 'events';
     responseType?: 'json' | 'arraybuffer';
     withCredentials?: boolean;
+    skipSuccessNotification?: boolean;
 }
 
 export interface ApiResult {
@@ -44,4 +45,7 @@ export enum Endpoints {
 
     // Music Sheet
     MUSIC_SHEET = '/MusicSheet',
+    MUSIC_SHEET_PAGING = '/MusicSheet/paging',
+    MUSIC_SHEET_DETAIL = '/MusicSheet/:id',
+    MUSIC_SHEET_LIKE = '/MusicSheet/:id/like',
 }

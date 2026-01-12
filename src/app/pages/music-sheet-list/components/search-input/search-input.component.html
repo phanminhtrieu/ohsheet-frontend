@@ -1,0 +1,14 @@
+<div class="w-full max-w-2xl mx-auto">
+  <p-iconField iconPosition="left" class="w-full">
+    <p-inputIcon styleClass="pi pi-search" />
+    <input
+      #input
+      type="text"
+      pInputText
+      [(ngModel)]="searchValue"
+      (ngModelChange)="onInputChange()"
+      placeholder="Search music sheets by title..."
+      class="w-full"
+    />
+  </p-iconField>
+</div>

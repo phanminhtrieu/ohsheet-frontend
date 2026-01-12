@@ -21,7 +21,7 @@ export class ApiService {
     private configService: ConfigService,
     private notificationService: NotificationService,
     private spinnerService: SpinnerService
-  ) { 
+  ) {
     this.baseUrl = environment.apiUrl;
   }
 
@@ -40,10 +40,10 @@ export class ApiService {
 
     const normalizedUrl = `${this.baseUrl}${this.normalizeUrl(url, options.urlReplacements!)}`;
 
-    options.params =  options.params || {};
+    options.params = options.params || {};
 
     return this.httpClient
-      .request(method, normalizedUrl, {...options, withCredentials: true })
+      .request(method, normalizedUrl, { ...options, withCredentials: true })
       .pipe(
         catchError((res) => {
           this.notificationService.showErrorNotification(res.error.Message || null);
@@ -53,10 +53,10 @@ export class ApiService {
           // if (result?.successMsg) { // shows success message to user if there is one included in the api result object
           //   this.notificationService.showMessageNotification(result.successMsg);
           // }
-          if(!result.isSucceeded && result.message) {
+          if (!result.isSucceeded && result.message) {
             this.notificationService.showErrorNotification(result.message)
           }
-          else if(result.isSucceeded) {
+          else if (result.isSucceeded && !options.skipSuccessNotification) {
             this.notificationService.showSuccessNotificatoin('Successfully!');
           }
         }),
@@ -69,8 +69,8 @@ export class ApiService {
       );
   }
 
-  private normalizeUrl(url: Endpoints, params: {[key: string]: string | number}): string {
-    return  Object.keys(params || {})
+  private normalizeUrl(url: Endpoints, params: { [key: string]: string | number }): string {
+    return Object.keys(params || {})
       .reduce((urlToCheck, paramName) => urlToCheck.replace(`:${paramName}`, params[paramName].toString()), url);
   }
 

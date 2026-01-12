@@ -139,8 +139,19 @@ export class UploadAudioDialogComponent {
   title: string = '';
   description: string = '';
 
+  thumbnailFile: File | null = null;
+
   openSaveDialog() {
     this.showSaveDialog = true;
+  }
+
+  onThumbnailSelect(event: any) {
+    // This event is from p-fileupload onSelect
+    // But since we use auto=true and customUpload, we might handle it in uploadHandler
+  }
+
+  onThumbnailUploadHandler(event: any) {
+    this.thumbnailFile = event.files[0];
   }
 
   onSave() {
@@ -148,7 +159,7 @@ export class UploadAudioDialogComponent {
     const transcriptionId = this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
 
     if (transcriptionId) {
-      this.musicSheetService.createMusicSheet(userId, this.title, this.description, transcriptionId)
+      this.musicSheetService.createMusicSheet(userId, this.title, this.description, transcriptionId, this.thumbnailFile)
         .subscribe({
           next: (res) => {
             this.showSaveDialog = false;
@@ -169,6 +180,7 @@ export class UploadAudioDialogComponent {
     this.localStorageService.removeItem(LocalHostConstant.TRANSCRIPTION_ID);
     this.buttonNextToStepTwoDisable = true;
     this.uploadProgress = 0;
+    this.thumbnailFile = null;
     clearInterval(this.intervalId);
   }
 }

@@ -71,26 +71,36 @@
     [rightBackgroundVisible]="rightBackgroundVisible"
   ></app-right-background>
 
-  <!-- Notice -->
-  <img
-    src="/assets/highlights/notice.svg"
-    alt=""
-    class="absolute left-[840px] top-[270px] w-[75px] animate-shake-continuous opacity-0 transition-opacity duration-[3000ms]"
-    [class.pointer-events-none]="!mainButtonVisible"
-    [class.opacity-100]="mainButtonVisible"
-  />
-
-  <!-- Main button -->
-  <p-button
-    id="btn-reach"
-    class="animate-shake-continuous shadow-2xl opacity-0 transition-opacity duration-[3000ms]"
-    styleClass="!px-12 !py-3"
-    label="Let reach it!"
-    (click)="onScrollToFeature()"
-    [class.pointer-events-none]="!mainButtonVisible"
+  <!-- Search Input -->
+  <!-- Search Input & Main Button Container -->
+  <div
+    class="flex flex-col items-center gap-10 opacity-0 transition-opacity duration-[3000ms]"
     [class.opacity-100]="mainButtonVisible"
     [class.hidden]="!mainButtonSoftVisible"
-  />
+  >
+    <!-- Search Input -->
+    <p-iconField iconPosition="left">
+      <p-inputIcon styleClass="pi pi-search" />
+      <input
+        type="text"
+        pInputText
+        [(ngModel)]="searchKeyword"
+        (ngModelChange)="onSearchKeywordChange()"
+        placeholder="Name song..."
+        class="!px-12 !py-3"
+      />
+    </p-iconField>
+
+    <!-- Main button -->
+    <p-button
+      id="btn-reach"
+      class="animate-shake-continuous shadow-2xl"
+      styleClass="!px-12 !py-3"
+      label="Upload your sheet!"
+      (click)="onScrollToFeature()"
+      [class.pointer-events-none]="!mainButtonVisible"
+    />
+  </div>
 
   <!-- Dialog -->
   <p-dialog

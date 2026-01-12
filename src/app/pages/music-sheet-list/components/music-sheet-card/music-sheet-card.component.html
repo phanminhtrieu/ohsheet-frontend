@@ -1,0 +1,64 @@
+<div class="h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:animate-shake-continuous" (click)="navigateToDetail()">
+  <p-card class="music-sheet-card h-full">
+    <!-- Thumbnail -->
+    <ng-template pTemplate="header">
+      <div class="relative w-full h-48 bg-gray-200 rounded-xl overflow-hidden">
+        <img
+          [src]="thumbnailUrl"
+          [alt]="musicSheet.title"
+          class="w-full h-full object-cover"
+          (error)="onImageError($event, false)"
+        />
+      </div>
+    </ng-template>
+
+    <!-- Content -->
+    <div class="space-y-3">
+      <!-- Title -->
+      <h3 class="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[3.5rem]">
+        {{ musicSheet.title }}
+      </h3>
+
+      <!-- Uploader Info -->
+      <div class="flex items-center space-x-2">
+        <img
+          [src]="uploaderAvatar"
+          [alt]="musicSheet.uploaderName || musicSheet.uploaderUsername || 'User'"
+          class="w-8 h-8 rounded-full object-cover"
+          (error)="onImageError($event, true)"
+        />
+        <span class="text-sm text-gray-600">
+          {{ musicSheet.uploaderName || musicSheet.uploaderUsername || 'Anonymous' }}
+        </span>
+      </div>
+
+      <!-- Stats -->
+      <div class="flex items-center justify-between text-sm text-gray-500">
+        <div class="flex items-center space-x-4">
+          <!-- Views -->
+          <div class="flex items-center space-x-1">
+            <i class="pi pi-eye"></i>
+            <span>{{ formatCount(musicSheet.viewCount) }}</span>
+          </div>
+
+          <!-- Likes -->
+          <div class="flex items-center space-x-1">
+            <i class="pi" [class.pi-heart]="!musicSheet.musicSheetUIState?.isLiked" [class.pi-heart-fill]="musicSheet.musicSheetUIState?.isLiked" [class.text-red-500]="musicSheet.musicSheetUIState?.isLiked"></i>
+            <span>{{ formatCount(musicSheet.likeCount) }}</span>
+          </div>
+
+          <!-- Comments -->
+          <div class="flex items-center space-x-1">
+            <i class="pi pi-comment"></i>
+            <span>{{ formatCount(musicSheet.commentCount) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modified Date -->
+      <div class="text-xs text-gray-400">
+        Updated {{ formatDate(musicSheet.modifiedDate) }}
+      </div>
+    </div>
+  </p-card>
+</div>
