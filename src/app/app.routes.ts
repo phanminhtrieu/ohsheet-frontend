@@ -7,7 +7,7 @@ import { SignInComponent } from './pages/sign-in/sign-in.component';
 export const routes: Routes = [
   { path: '', component: LandingListComponent },
   { path: 'about', component: AboutListComponent },
-  // { path: 'profile', component: ProfileComponent },
+  { path: 'profile', loadComponent: () => import('./pages/profile/profile-page.component').then(m => m.ProfilePageComponent) },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'sign-in', component: SignInComponent },
   { path: 'music-sheets', loadComponent: () => import('./pages/music-sheet-list/music-sheet-list.component').then(m => m.MusicSheetListComponent) },

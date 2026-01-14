@@ -11,8 +11,13 @@
 
   <ng-container *ngIf="currentUser$ | async as currentUser; else guestTemplate">
     <div class="flex items-center gap-3">
-        <span class="font-medium text-black">Welcome, {{ currentUser.firstName }}</span>
-        <p-button label="Log Out" icon="pi pi-sign-out" (click)="logout()" styleClass="p-button-text"></p-button>
+        <p-button 
+            [label]="'Welcome, ' + currentUser.firstName" 
+            icon="pi pi-user" 
+            (click)="menu.toggle($event)" 
+            styleClass="p-button-text text-black"
+        ></p-button>
+        <p-menu #menu [model]="userMenuItems" [popup]="true"></p-menu>
     </div>
   </ng-container>
   <ng-template #guestTemplate>

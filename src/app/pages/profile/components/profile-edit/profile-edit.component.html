@@ -1,0 +1,52 @@
+<div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+    <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <i class="pi pi-pencil mr-2 text-blue-500"></i> Edit Profile
+    </h3>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Avatar Section -->
+        <div class="flex flex-col items-center gap-4 mb-6">
+            <div class="relative group">
+                <img [src]="avatarPreview || profile?.avatarUrl || 'assets/images/default-avatar.png'" 
+                     alt="Avatar Preview" 
+                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                     (click)="fileInput.click()">
+                    <i class="pi pi-camera text-white text-2xl"></i>
+                </div>
+            </div>
+            <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden">
+            <p-button label="Change Avatar" 
+                      icon="pi pi-upload" 
+                      (click)="fileInput.click()" 
+                      styleClass="p-button-outlined p-button-sm">
+            </p-button>
+            <small class="text-gray-500">JPG, PNG or GIF. Max 2MB.</small>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="fullName" class="text-sm font-medium text-gray-700">Full Name</label>
+            <input pInputText id="fullName" formControlName="fullName" placeholder="Enter your full name" class="w-full" />
+            <small class="text-red-500" *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched">
+                Full name is required (max 100 characters).
+            </small>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="bio" class="text-sm font-medium text-gray-700">Bio</label>
+            <textarea pInputTextarea id="bio" formControlName="bio" rows="4" placeholder="Tell us about yourself..." class="w-full"></textarea>
+            <small class="text-red-500" *ngIf="form.get('bio')?.invalid && form.get('bio')?.touched">
+                Bio cannot exceed 500 characters.
+            </small>
+        </div>
+
+        <div class="pt-4">
+            <p-button label="Save Changes" 
+                      type="submit" 
+                      [loading]="isSubmitting" 
+                      [disabled]="form.invalid || isSubmitting"
+                      styleClass="w-full p-button-primary">
+            </p-button>
+        </div>
+    </form>
+</div>
+<p-toast></p-toast>

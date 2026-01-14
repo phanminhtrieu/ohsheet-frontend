@@ -8,6 +8,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ComingSoonDialogComponent } from '../coming-soon-dialog/coming-soon-dialog.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { MenuModule } from 'primeng/menu';
 
 
 import { Observable } from 'rxjs'; // Add import
@@ -21,12 +22,14 @@ import { Observable } from 'rxjs'; // Add import
     AvatarModule,
     CommonModule,
     DialogModule,
-    ComingSoonDialogComponent],
+    ComingSoonDialogComponent,
+    MenuModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'
 })
 export class TopbarComponent {
   items: MenuItem[] = [];
+  userMenuItems: MenuItem[] = [];
   comingSoonDialogVisible = false;
   currentUser$: Observable<any>;
 
@@ -43,6 +46,33 @@ export class TopbarComponent {
       { label: 'Sheet', icon: 'pi pi-book', routerLink: '/music-sheets' },
       // { label: 'Features', icon: 'pi pi-star', routerLink: '/features' },
       // { label: 'About', icon: 'pi pi-info-circle', routerLink: '/about' },
+    ];
+
+    this.userMenuItems = [
+      {
+        label: 'Profile',
+        icon: 'pi pi-user',
+        command: () => {
+          this.router.navigate(['/profile']);
+        }
+      },
+      {
+        label: 'Liked Sheets',
+        icon: 'pi pi-heart',
+        command: () => {
+          this.router.navigate(['/profile'], { queryParams: { tab: 1 } });
+        }
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Log Out',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          this.logout();
+        }
+      }
     ];
   }
 
