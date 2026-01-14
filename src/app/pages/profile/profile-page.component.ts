@@ -4,6 +4,7 @@ import { ProfileService } from 'app/core/services/profile.service';
 import { TabViewModule } from 'primeng/tabview';
 import { ProfileEditComponent } from './components/profile-edit/profile-edit.component';
 import { ProfileLikesComponent } from './components/profile-likes/profile-likes.component';
+import { RecentlyViewedComponent } from './components/recently-viewed/recently-viewed.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ActivatedRoute } from '@angular/router';
 
@@ -15,7 +16,8 @@ import { ActivatedRoute } from '@angular/router';
         TabViewModule,
         ProfileEditComponent,
         ProfileLikesComponent,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        RecentlyViewedComponent
     ],
     templateUrl: './profile-page.component.html',
     styleUrl: './profile-page.component.scss'

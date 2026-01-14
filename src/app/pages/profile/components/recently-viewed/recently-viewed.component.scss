@@ -1,0 +1,9 @@
+:host {
+    display: block;
+}
+
+.recently-viewed-container {
+    ::ng-deep .p-carousel-items-content {
+        // Ensure items have equal height if needed
+    }
+}

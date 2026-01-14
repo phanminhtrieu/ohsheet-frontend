@@ -7,6 +7,7 @@ import { MusicSheetService } from 'app/core/services/music-sheet.service';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
 import { NotificationService } from 'app/core/services/notification.service';
 import { LocalHostConstant } from 'app/shared/constants';
+import { RecentlyViewedService } from 'app/core/services/recently-viewed.service';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
@@ -30,7 +31,8 @@ export class MusicSheetDetailComponent extends BaseComponent implements OnInit {
         private location: Location,
         @Inject(PLATFORM_ID) protected override platformId: Object,
         private localStorageService: LocalStorageService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private recentlyViewedService: RecentlyViewedService
     ) {
         super(platformId);
     }
@@ -45,6 +47,9 @@ export class MusicSheetDetailComponent extends BaseComponent implements OnInit {
             const id = this.route.snapshot.paramMap.get('id');
             if (id) {
                 this.loadMusicSheet(Number(id));
+                if (this.currentUserId) {
+                    this.recentlyViewedService.recordView(Number(id)).subscribe();
+                }
             }
         }
     }

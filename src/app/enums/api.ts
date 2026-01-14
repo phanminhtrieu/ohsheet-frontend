@@ -48,9 +48,11 @@ export enum Endpoints {
     MUSIC_SHEET_PAGING = '/MusicSheet/paging',
     MUSIC_SHEET_DETAIL = '/MusicSheet/:id',
     MUSIC_SHEET_LIKE = '/MusicSheet/:id/like',
+    MUSIC_SHEET_VIEW = '/MusicSheet/:id/view',
 
     // Profile
     PROFILE = '/Profile',
     PROFILE_ME = '/Profile/me',
     PROFILE_LIKES = '/Profile/me/likes',
+    PROFILE_RECENTLY_VIEWED = '/Profile/me/recently-viewed',
 }
