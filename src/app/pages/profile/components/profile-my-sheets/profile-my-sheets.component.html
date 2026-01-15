@@ -1,0 +1,25 @@
+<div class="space-y-6">
+    <div *ngIf="isLoading" class="flex justify-center items-center h-48">
+        <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+    </div>
+
+    <div *ngIf="!isLoading && mySheets.length === 0" class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+        <i class="pi pi-file text-4xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500">You haven't uploaded any music sheets yet.</p>
+        <a routerLink="/landing" class="text-blue-500 hover:underline mt-2 inline-block">Upload your first sheet</a>
+    </div>
+
+    <div *ngIf="!isLoading && mySheets.length > 0">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <app-music-sheet-card *ngFor="let sheet of mySheets" [musicSheet]="sheet"></app-music-sheet-card>
+        </div>
+
+        <div class="mt-8 flex justify-center">
+            <p-paginator [rows]="filters.pageSize!" 
+                        [totalRecords]="totalRecords" 
+                        (onPageChange)="onPageChange($event)"
+                        [rowsPerPageOptions]="[8, 16, 24]">
+            </p-paginator>
+        </div>
+    </div>
+</div>

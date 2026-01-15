@@ -22,4 +22,8 @@ export class ProfileService {
     getMyLikedSheets(request: PagingRequest): Observable<any> {
         return this.apiService.request(Endpoints.PROFILE_LIKES, Methods.GET, { params: request, skipSuccessNotification: true });
     }
+
+    getMySheets(request: PagingRequest): Observable<any> {
+        return this.apiService.request(Endpoints.PROFILE_SHEETS, Methods.GET, { params: request, skipSuccessNotification: true });
+    }
 }

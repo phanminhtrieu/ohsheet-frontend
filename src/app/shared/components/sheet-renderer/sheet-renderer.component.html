@@ -1,5 +1,22 @@
-<button (click)="play()">Play</button>
-<!-- <button (click)="replay()">Replay Play</button> -->
-<div class="overflow-auto h-[100%]">
-  <div #sheetContainer id="sheet-container"></div>
+<div class="flex flex-col h-full">
+  <div class="flex items-center justify-between p-4 bg-gray-100 border-b">
+    <div class="flex gap-2">
+      <button (click)="play()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Play</button>
+      <button (click)="stopMidi()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Stop</button>
+    </div>
+    
+    <div class="flex items-center gap-4">
+      <button (click)="prevPage()" [disabled]="currentPageIndex === 0" class="p-2 disabled:opacity-30">
+        <i class="pi pi-chevron-left"></i> Prev
+      </button>
+      <span class="font-medium">Page {{ currentPageIndex + 1 }} / {{ pages.length }}</span>
+      <button (click)="nextPage()" [disabled]="currentPageIndex === pages.length - 1" class="p-2 disabled:opacity-30">
+        Next <i class="pi pi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-auto p-4 flex justify-center bg-gray-50">
+    <div #sheetContainer id="sheet-container" class="bg-white shadow-lg p-8 min-h-[800px] flex justify-center"></div>
+  </div>
 </div>

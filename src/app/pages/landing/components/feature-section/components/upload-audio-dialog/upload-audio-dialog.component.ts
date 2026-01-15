@@ -140,6 +140,7 @@ export class UploadAudioDialogComponent {
   description: string = '';
 
   thumbnailFile: File | null = null;
+  thumbnailPreviewUrl: string | ArrayBuffer | null = null;
 
   openSaveDialog() {
     this.showSaveDialog = true;
@@ -152,6 +153,13 @@ export class UploadAudioDialogComponent {
 
   onThumbnailUploadHandler(event: any) {
     this.thumbnailFile = event.files[0];
+    if (this.thumbnailFile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.thumbnailPreviewUrl = e.target?.result as string;
+      };
+      reader.readAsDataURL(this.thumbnailFile);
+    }
   }
 
   onSave() {
@@ -181,6 +189,7 @@ export class UploadAudioDialogComponent {
     this.buttonNextToStepTwoDisable = true;
     this.uploadProgress = 0;
     this.thumbnailFile = null;
+    this.thumbnailPreviewUrl = null;
     clearInterval(this.intervalId);
   }
 }

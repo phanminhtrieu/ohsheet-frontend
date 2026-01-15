@@ -54,5 +54,6 @@ export enum Endpoints {
     PROFILE = '/Profile',
     PROFILE_ME = '/Profile/me',
     PROFILE_LIKES = '/Profile/me/likes',
+    PROFILE_SHEETS = '/Profile/me/sheets',
     PROFILE_RECENTLY_VIEWED = '/Profile/me/recently-viewed',
 }

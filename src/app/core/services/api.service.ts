@@ -53,10 +53,10 @@ export class ApiService {
           // if (result?.successMsg) { // shows success message to user if there is one included in the api result object
           //   this.notificationService.showMessageNotification(result.successMsg);
           // }
-          if (!result.isSucceeded && result.message) {
+          if (result && !result.isSucceeded && result.message) {
             this.notificationService.showErrorNotification(result.message)
           }
-          else if (result.isSucceeded && !options.skipSuccessNotification) {
+          else if (result && result.isSucceeded && !options.skipSuccessNotification) {
             this.notificationService.showSuccessNotificatoin('Successfully!');
           }
         }),

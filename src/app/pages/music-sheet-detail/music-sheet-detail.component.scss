@@ -1,3 +1,55 @@
 .like-row {
-    @apply flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 -mx-2 rounded transition-colors;
+    // @apply flex justify-between items-center cursor-pointer hover:bg-gray-100 p-2 -mx-2 rounded transition-colors;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #f3f4f6;
+    }
+}
+
+// Adaptive layout for reading mode
+.detail-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    transition: all 0.3s ease;
+
+    // &.reading-mode {
+    //     flex-direction: row;
+    //     align-items: flex-start;
+
+    //     .metadata-section {
+    //         position: sticky;
+    //         top: 120px;
+    //         width: 300px;
+    //         max-height: calc(100vh - 140px);
+    //         overflow-y: auto;
+    //         flex-shrink: 0;
+    //         order: 2; // Move to right
+    //         transition: width 0.3s ease, transform 0.3s ease;
+    //     }
+
+    //     .sheet-section {
+    //         flex: 1;
+    //         order: 1; // Sheet on left
+    //         outline: none; // Remove focus outline
+    //     }
+    // }
+}
+
+.metadata-section {
+    width: 100%;
+    transition: width 0.3s ease, transform 0.3s ease;
+}
+
+.sheet-section {
+    width: 100%;
 }

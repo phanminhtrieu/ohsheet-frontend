@@ -57,10 +57,17 @@ export class TopbarComponent {
         }
       },
       {
+        label: 'My Sheets',
+        icon: 'pi pi-file',
+        command: () => {
+          this.router.navigate(['/profile'], { queryParams: { tab: 1 } });
+        }
+      },
+      {
         label: 'Liked Sheets',
         icon: 'pi pi-heart',
         command: () => {
-          this.router.navigate(['/profile'], { queryParams: { tab: 1 } });
+          this.router.navigate(['/profile'], { queryParams: { tab: 2 } });
         }
       },
       {

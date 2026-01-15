@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, ViewChild, ElementRef, AfterViewInit, OnDestroy as NgOnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from 'app/core/base/base.component';
 import { MusicSheet } from 'app/core/models/music-sheet.interface';
@@ -8,6 +8,7 @@ import { LocalStorageService } from 'app/core/services/local-storage.service';
 import { NotificationService } from 'app/core/services/notification.service';
 import { LocalHostConstant } from 'app/shared/constants';
 import { RecentlyViewedService } from 'app/core/services/recently-viewed.service';
+import { SheetRendererComponent } from '../../shared/components/sheet-renderer/sheet-renderer.component';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
@@ -15,15 +16,19 @@ import { finalize } from 'rxjs';
 @Component({
     selector: 'app-music-sheet-detail',
     standalone: true,
-    imports: [CommonModule, ButtonModule, ProgressSpinnerModule],
+    imports: [CommonModule, ButtonModule, ProgressSpinnerModule, SheetRendererComponent],
     templateUrl: './music-sheet-detail.component.html',
-    styleUrl: './music-sheet-detail.component.scss'
+    styleUrls: ['./music-sheet-detail.component.scss']
 })
-export class MusicSheetDetailComponent extends BaseComponent implements OnInit {
+export class MusicSheetDetailComponent extends BaseComponent implements OnInit, AfterViewInit, NgOnDestroy {
+    @ViewChild('metadataSection') metadataSection?: ElementRef<HTMLDivElement>;
+    @ViewChild('sheetSection') sheetSection?: ElementRef<HTMLDivElement>;
+
     musicSheet: MusicSheet | null = null;
     isLoading = true;
     isLiked: boolean = false;
     currentUserId: string | null = null;
+
 
     constructor(
         private route: ActivatedRoute,
@@ -53,6 +58,14 @@ export class MusicSheetDetailComponent extends BaseComponent implements OnInit {
             }
         }
     }
+
+    ngAfterViewInit(): void {
+        if (this.isBrowser) {
+            // No specific after view init logic needed for now
+        }
+    }
+
+
 
     loadMusicSheet(id: number): void {
         this.isLoading = true;
@@ -121,5 +134,12 @@ export class MusicSheetDetailComponent extends BaseComponent implements OnInit {
         } else {
             img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect width="200" height="200" fill="%23e5e7eb"/%3E%3Cpath d="M50 150l50-50 30 30 20-20v40H50z" fill="%239ca3af"/%3E%3Ccircle cx="70" cy="70" r="15" fill="%239ca3af"/%3E%3C/svg%3E';
         }
+    }
+
+    scrollToSheet(): void {
+        this.sheetSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    ngOnDestroy(): void {
     }
 }

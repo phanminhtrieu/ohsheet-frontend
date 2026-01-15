@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
-import VexFlow, { Factory, EasyScore, Voice, Formatter, Stave, StaveNote } from 'vexflow';
+import { Component, ElementRef, Input, OnDestroy, ViewChild, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Factory, EasyScore, Voice, Formatter, Stave } from 'vexflow';
 import {
   start as ToneStart,
   getTransport,
@@ -10,15 +10,23 @@ import {
 } from "tone";
 import { MidiService } from 'app/core/services/midi.service';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
-import { Midi } from "@tonejs/midi";
 import { Subject, takeUntil } from 'rxjs';
 import { LocalHostConstant } from 'app/shared/constants';
 
 interface Note {
   start: number;
+  end: number;
   note: string;
-  duration: number;
-  [key: string]: any; // hỗ trợ các thuộc tính khác
+}
+
+interface SheetLine {
+  notes: string[];
+  notePositions: any[];
+}
+
+interface SheetPage {
+  pageIndex: number;
+  lines: SheetLine[];
 }
 
 @Component({
@@ -28,16 +36,19 @@ interface Note {
     CommonModule,
   ],
   templateUrl: './sheet-renderer.component.html',
-  styleUrl: './sheet-renderer.component.scss'
+  styleUrls: ['./sheet-renderer.component.scss']
 })
-export class SheetRendererComponent implements OnDestroy {
+export class SheetRendererComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('sheetContainer', { static: true }) sheetContainer!: ElementRef<HTMLDivElement>;
-  @Input() chunkSize: number = 8;
 
-  constructor(
-    private midiService: MidiService,
-    private localStorageService: LocalStorageService
-  ) { }
+  @Input() transcriptionId?: string;
+  @Input() pageMode: 'compact' | 'normal' | 'dense' = 'normal';
+  @Input() linesPerPage?: number;
+  @Input() notesPerLine?: number;
+  @Input() sheetWidth?: number;
+
+  pages: SheetPage[] = [];
+  currentPageIndex: number = 0;
 
   allNotePositions: any[] = [];
   cursors: any[] = [];
@@ -50,8 +61,13 @@ export class SheetRendererComponent implements OnDestroy {
   previewNotes: [number, number, number][] = []
   private destroy$ = new Subject<void>();
 
+  constructor(
+    private midiService: MidiService,
+    private localStorageService: LocalStorageService
+  ) { }
+
   async ngOnInit(): Promise<void> {
-    const transcriptionId = this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
+    const transcriptionId = this.transcriptionId || this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
     if (transcriptionId) {
       this.midiService.loadMidi(transcriptionId);
     }
@@ -62,106 +78,185 @@ export class SheetRendererComponent implements OnDestroy {
         if (notes && notes.length > 0) {
           this.previewNotes = notes;
           console.log("🎵 Loaded MIDI notes:", this.previewNotes);
-          this.renderNotes(this.previewNotes, true);
+          this.buildPagesFromNotes(this.previewNotes);
+          this.renderPage(0);
         }
       });
+
+    window.addEventListener('keydown', this.handleKeyDown);
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['transcriptionId'] && !changes['transcriptionId'].firstChange) {
+      const newId = changes['transcriptionId'].currentValue;
+      if (newId) {
+        this.midiService.loadMidi(newId);
+      }
+    }
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowRight') {
+      this.nextPage();
+    } else if (event.key === 'ArrowLeft') {
+      this.prevPage();
+    }
+  };
 
   ngOnDestroy(): void {
+    window.removeEventListener('keydown', this.handleKeyDown);
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
   }
 
-  renderNotes(notesArray: [number, number, number][], isDemo: boolean) {
-    // reset trước khi render lại
+  buildPagesFromNotes(notesArray: [number, number, number][]) {
+    const notesPerLine = this.notesPerLine ?? 8;
+    let linesPerPage = this.linesPerPage;
+    if (!linesPerPage) {
+      switch (this.pageMode) {
+        case 'compact': linesPerPage = 5; break;
+        case 'dense': linesPerPage = 10; break;
+        case 'normal':
+        default: linesPerPage = 8; break;
+      }
+    }
+
+    // 1. Parse MIDI -> logical notes
+    const vexflowNotes = notesArray.map(([start, end, pitch]) => this.midiToVexflowKey(start, end, pitch));
+    const vexflowSortedNotes = vexflowNotes.sort((a, b) => a.start - b.start);
+    const groupedNotesString = this.notesToString(vexflowSortedNotes);
+    const groupedNotesArray = groupedNotesString.split(", ");
+
+    // 2. Group notes into lines
+    const allLines: SheetLine[] = [];
+    for (let i = 0; i < groupedNotesArray.length; i += notesPerLine) {
+      const chunk = groupedNotesArray.slice(i, i + notesPerLine);
+      const notePositions = vexflowSortedNotes.slice(i, i + notesPerLine).map(n => ({
+        start: n.start,
+        end: n.end,
+        x: 0,
+        y: 0
+      }));
+
+      allLines.push({
+        notes: chunk,
+        notePositions: notePositions
+      });
+    }
+
+    // 3. Group lines into pages
+    this.pages = [];
+    for (let i = 0; i < allLines.length; i += linesPerPage) {
+      this.pages.push({
+        pageIndex: Math.floor(i / linesPerPage),
+        lines: allLines.slice(i, i + linesPerPage)
+      });
+    }
+  }
+
+  private calculateStaveWidth(): number {
+    // Use explicit width if provided
+    if (this.sheetWidth) {
+      return this.sheetWidth - 100; // Account for padding + clef space
+    }
+
+    // Calculate based on notesPerLine
+    const baseWidth = 450;
+    const notesPerLine = this.notesPerLine ?? 8;
+    const widthPerNote = 50; // Linear scaling
+
+    return baseWidth + ((notesPerLine - 8) * widthPerNote);
+  }
+
+  renderPage(pageIndex: number) {
+    if (pageIndex < 0 || pageIndex >= this.pages.length) return;
+    this.currentPageIndex = pageIndex;
+    const page = this.pages[pageIndex];
+
+    // Reset rendering state
     this.allNotePositions = [];
+    this.cursors = [];
+    const container = this.sheetContainer.nativeElement;
+    container.innerHTML = '';
 
-    // Cấu hình
-    const staveWidth = 450;  // chiều rộng mỗi dòng khuông
-    const chunkSize = this.chunkSize;     // số nốt tối đa mỗi dòng
-    let yOffset = 20;        // vị trí Y bắt đầu
-    const xOffset = 35;
-    const lines = Math.ceil(notesArray.length / chunkSize);
-    const staveHeight = 100; // chiều cao giữa các dòng
-    const svgHeight = lines * staveHeight + 40; // thêm padding
+    const staveWidth = this.calculateStaveWidth();
+    const svgWidth = staveWidth + 100; // Increased padding for clef
+    const staveHeight = 100;
+    const xOffset = 50; // Increased from 35 to prevent clef cutoff
+    let yOffset = 20;
 
-    // Tạo Factory
+    const svgHeight = page.lines.length * staveHeight + 40;
     const vf = new Factory({
-      renderer: { elementId: 'sheet-container', width: 520, height: svgHeight },
+      renderer: { elementId: 'sheet-container', width: svgWidth, height: svgHeight },
     });
     const score = vf.EasyScore();
     const context = vf.getContext();
 
-    // Chuyển từ tín hiệu MIDI -> ký hiệu chữ c, d, e, ...
-    const vexflowNotes = notesArray.map(([start, end, pitch]) => this.midiToVexflowKey(start, end, pitch));
-    const vexflowSortedNotes = vexflowNotes.sort((a, b) => a.start - b.start);
-
-    const groupedNotesString = this.notesToString(vexflowSortedNotes);
-    const groupedNotesArray = groupedNotesString.split(", ");
-
-    let line = 1;
-    // Chia nốt thành từng chunk
-    for (let i = 0; i < groupedNotesArray.length; i += chunkSize) {
-      const chunk = groupedNotesArray.slice(i, i + chunkSize);
-
-      const voice = new Voice();
-      voice.setMode(Voice.Mode.SOFT); // Không quan tâm nó có bao nhiêu phách trong một ô nhịp
-
-      // Add note vào 1 voice
-      const tickables = score.notes(chunk.join(", "));
-      voice.addTickables(tickables);
-
-      // Tạo stave thủ công
-      const stave = new Stave(xOffset, yOffset, staveWidth);
-      stave.addClef('treble').setContext(context).draw();
-
-      // Đánh số dòng bằng context 
-      const ctx = vf.getContext();
-      const y = stave.getYForTopText() + 35;
-      ctx.fillText(`${line}`, 15, y);
-
-      const voices = [voice];
-
-      this.formatVoices(voices, stave);
-      this.drawVoicesOnStave(context, stave, voices);
-
-      // Ghi lại vị trí từng nốt
-      const notePositions = tickables.map((n, idx) => ({
-        start: vexflowSortedNotes[i + idx]?.start ?? 0,
-        end: vexflowSortedNotes[i + idx]?.end ?? 0,
-        x: n.getAbsoluteX(),
-        y: yOffset,
-      }));
-
-      this.allNotePositions.push(...notePositions);
-
-      // 🟥 Tạo thanh cursor cho dòng hiện tại
-      const cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      cursor.setAttribute("x1", xOffset.toString());
-      cursor.setAttribute("x2", xOffset.toString());
-      cursor.setAttribute("y1", yOffset.toString());
-      cursor.setAttribute("y2", (yOffset + staveHeight - 20).toString());
-      cursor.setAttribute("stroke", "red");
-      cursor.setAttribute("stroke-width", "2");
-
-      const svg = document.querySelector("#sheet-container svg");
-      svg?.appendChild(cursor);
-
-      // Lưu để animate theo chunk
-      this.cursors.push(cursor);
-
-
-      // Tăng yOffset cho dòng tiếp theo
+    page.lines.forEach((line, lineIdx) => {
+      this.renderLine(line, lineIdx, yOffset, xOffset, staveWidth, staveHeight, vf, score, context);
       yOffset += staveHeight;
-      line = line + 1;
-    }
+    });
 
     vf.draw();
   }
 
+  renderLine(
+    line: SheetLine,
+    lineIdx: number,
+    yOffset: number,
+    xOffset: number,
+    staveWidth: number,
+    staveHeight: number,
+    vf: Factory,
+    score: EasyScore,
+    context: any
+  ) {
+    const voice = new Voice();
+    voice.setMode(Voice.Mode.SOFT);
+
+    const tickables = score.notes(line.notes.join(", "));
+    voice.addTickables(tickables);
+
+    const stave = new Stave(xOffset, yOffset, staveWidth);
+    stave.addClef('treble').setContext(context).draw();
+
+    // Line number (global index)
+    const linesPerPage = this.linesPerPage ?? (this.pageMode === 'compact' ? 5 : this.pageMode === 'dense' ? 10 : 8);
+    const globalLineIndex = (this.currentPageIndex * linesPerPage) + lineIdx + 1;
+    context.fillText(`${globalLineIndex}`, 15, stave.getYForTopText() + 35);
+
+    this.formatVoices([voice], stave);
+    this.drawVoicesOnStave(context, stave, [voice]);
+
+    // Update note positions with rendered X
+    tickables.forEach((n, idx) => {
+      if (line.notePositions[idx]) {
+        line.notePositions[idx].x = n.getAbsoluteX();
+        line.notePositions[idx].y = yOffset;
+        this.allNotePositions.push(line.notePositions[idx]);
+      }
+    });
+
+    // Create cursor for this line
+    const cursor = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    cursor.setAttribute("x1", xOffset.toString());
+    cursor.setAttribute("x2", xOffset.toString());
+    cursor.setAttribute("y1", yOffset.toString());
+    cursor.setAttribute("y2", (yOffset + staveHeight - 20).toString());
+    cursor.setAttribute("stroke", "red");
+    cursor.setAttribute("stroke-width", "2");
+    cursor.style.display = "none";
+
+    const svgElement = document.querySelector("#sheet-container svg");
+    svgElement?.appendChild(cursor);
+    this.cursors.push(cursor);
+  }
+
   play() {
     this.playMidi(this.previewNotes);
-
   }
 
   midiToVexflowKey(startTime: number, endTime: number, pitch: number): { start: number, end: number, note: string } {
@@ -186,10 +281,8 @@ export class SheetRendererComponent implements OnDestroy {
       const last = currentGroup[currentGroup.length - 1];
 
       if (last && Math.abs(note.start - last.start) <= tolerance) {
-        // cùng thời điểm -> thêm vào group
         currentGroup.push(note);
       } else {
-        // xử lý group cũ
         if (currentGroup.length > 0) {
           if (currentGroup.length === 1) {
             result.push(`${currentGroup[0].note}/q`);
@@ -198,14 +291,11 @@ export class SheetRendererComponent implements OnDestroy {
             result.push(`(${chordNotes})/q`);
           }
         }
-        // bắt đầu group mới
         currentGroup = [note];
       }
     }
 
-    // push group cuối cùng
     if (currentGroup.length > 0) {
-
       if (currentGroup.length === 1) {
         result.push(`${currentGroup[0].note}/q`);
       } else {
@@ -222,22 +312,11 @@ export class SheetRendererComponent implements OnDestroy {
     new Formatter().joinVoices(voiceArray).format(voiceArray, stave.getWidth() - 50);
   }
 
-  drawVoicesOnStave(
-    context: any,
-    stave: Stave,
-    voices: Voice | Voice[],
-  ) {
-    // Đảm bảo voices là mảng
+  drawVoicesOnStave(context: any, stave: Stave, voices: Voice | Voice[]) {
     const voiceArray = Array.isArray(voices) ? voices : [voices];
-
-    // Vẽ từng voice lên stave
     for (const voice of voiceArray) {
       voice.draw(context, stave);
     }
-  }
-
-  groupNoteByStartTime(currentGroup: any, currentNote: any, last: any) {
-
   }
 
   async playMidi(notesArray: [number, number, number][]) {
@@ -246,20 +325,18 @@ export class SheetRendererComponent implements OnDestroy {
     const transport = getTransport();
     await ToneStart();
 
-    // Dùng PolySynth với AMSynth
     this.synth = new PolySynth(AMSynth).toDestination();
 
     transport.cancel(0);
     transport.stop();
     transport.position = 0;
 
-    // Dữ liệu toneNotes dựa trên previewNotes / allNotePositions
     const toneNotes = this.previewNotes.map(([start, end, midi]) => {
       const noteObj = this.midiToVexflowKey(start, end, midi);
       return {
         time: start,
         duration: end - start,
-        name: noteObj.note.toUpperCase(), // ví dụ "C4", "D#5", v.v.
+        name: noteObj.note.toUpperCase(),
       };
     });
 
@@ -289,7 +366,9 @@ export class SheetRendererComponent implements OnDestroy {
       first.setAttribute("x2", "35");
     }
 
-    cancelAnimationFrame(this.animationFrameId!);
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
     this.isPlaying = false;
   }
 
@@ -299,23 +378,52 @@ export class SheetRendererComponent implements OnDestroy {
     const transport = getTransport();
     const currentTime = transport.seconds - this.startTime;
 
-    const currentNote = this.allNotePositions.find(
-      n => currentTime >= n.start && currentTime < n.end
-    );
+    // Find the note and its page
+    let targetPageIndex = -1;
+    let targetNote = null;
 
-    if (currentNote) {
-      const currentLine = Math.floor(currentNote.y / 100);
+    for (let p = 0; p < this.pages.length; p++) {
+      const page = this.pages[p];
+      for (const line of page.lines) {
+        const note = line.notePositions.find(n => currentTime >= n.start && currentTime < n.end);
+        if (note) {
+          targetPageIndex = p;
+          targetNote = note;
+          break;
+        }
+      }
+      if (targetNote) break;
+    }
+
+    if (targetNote && targetPageIndex !== -1) {
+      if (targetPageIndex !== this.currentPageIndex) {
+        this.renderPage(targetPageIndex);
+      }
+
+      const currentLineIndex = Math.floor((targetNote.y - 20) / 100);
       this.cursors.forEach((c, idx) => {
-        c.style.display = idx === currentLine ? "block" : "none";
+        c.style.display = idx === currentLineIndex ? "block" : "none";
       });
 
-      const cursor = this.cursors[currentLine];
+      const cursor = this.cursors[currentLineIndex];
       if (cursor) {
-        cursor.setAttribute("x1", currentNote.x.toString());
-        cursor.setAttribute("x2", currentNote.x.toString());
+        cursor.setAttribute("x1", targetNote.x.toString());
+        cursor.setAttribute("x2", targetNote.x.toString());
       }
     }
 
     this.animationFrameId = requestAnimationFrame(() => this.animateCursorLoop());
+  }
+
+  nextPage() {
+    if (this.currentPageIndex < this.pages.length - 1) {
+      this.renderPage(this.currentPageIndex + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPageIndex > 0) {
+      this.renderPage(this.currentPageIndex - 1);
+    }
   }
 }
