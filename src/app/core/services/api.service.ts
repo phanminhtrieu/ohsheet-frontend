@@ -56,7 +56,7 @@ export class ApiService {
           if (result && !result.isSucceeded && result.message) {
             this.notificationService.showErrorNotification(result.message)
           }
-          else if (result && result.isSucceeded && !options.skipSuccessNotification) {
+          else if (result && result.isSucceeded && !options.skipSuccessNotification && method !== Methods.GET) {
             this.notificationService.showSuccessNotificatoin('Successfully!');
           }
         }),

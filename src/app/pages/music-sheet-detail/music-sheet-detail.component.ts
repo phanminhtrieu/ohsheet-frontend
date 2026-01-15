@@ -9,6 +9,7 @@ import { NotificationService } from 'app/core/services/notification.service';
 import { LocalHostConstant } from 'app/shared/constants';
 import { RecentlyViewedService } from 'app/core/services/recently-viewed.service';
 import { SheetRendererComponent } from '../../shared/components/sheet-renderer/sheet-renderer.component';
+import { CommentSectionComponent } from './comment-section/comment-section.component';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
@@ -16,7 +17,7 @@ import { finalize } from 'rxjs';
 @Component({
     selector: 'app-music-sheet-detail',
     standalone: true,
-    imports: [CommonModule, ButtonModule, ProgressSpinnerModule, SheetRendererComponent],
+    imports: [CommonModule, ButtonModule, ProgressSpinnerModule, SheetRendererComponent, CommentSectionComponent],
     templateUrl: './music-sheet-detail.component.html',
     styleUrls: ['./music-sheet-detail.component.scss']
 })

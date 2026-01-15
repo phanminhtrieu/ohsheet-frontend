@@ -1,4 +1,4 @@
-import { HttpHeaders } from "@angular/common/http";
+﻿import { HttpHeaders } from "@angular/common/http";
 import { IObject } from "./common";
 
 export enum Methods {
@@ -49,6 +49,8 @@ export enum Endpoints {
     MUSIC_SHEET_DETAIL = '/MusicSheet/:id',
     MUSIC_SHEET_LIKE = '/MusicSheet/:id/like',
     MUSIC_SHEET_VIEW = '/MusicSheet/:id/view',
+    MUSIC_SHEET_COMMENTS = '/musicsheets/:sheetId/comments',
+    MUSIC_SHEET_COMMENT_DELETE = '/musicsheets/:sheetId/comments/:commentId',
 
     // Profile
     PROFILE = '/Profile',
@@ -56,4 +58,7 @@ export enum Endpoints {
     PROFILE_LIKES = '/Profile/me/likes',
     PROFILE_SHEETS = '/Profile/me/sheets',
     PROFILE_RECENTLY_VIEWED = '/Profile/me/recently-viewed',
+
+    // Notifications
+    NOTIFICATIONS = '/Notification',
 }

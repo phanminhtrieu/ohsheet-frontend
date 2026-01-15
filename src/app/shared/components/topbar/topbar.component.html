@@ -11,13 +11,43 @@
 
   <ng-container *ngIf="currentUser$ | async as currentUser; else guestTemplate">
     <div class="flex items-center gap-3">
+        <!-- Notification Icon -->
+        <div class="relative cursor-pointer mr-2" (click)="op.toggle($event)">
+            <i class="pi pi-bell text-xl text-black"></i>
+            <p-badge *ngIf="unreadCount > 0" [value]="unreadCount.toString()" severity="danger" styleClass="absolute -top-2 -right-2"></p-badge>
+        </div>
+
         <p-button 
             [label]="'Welcome, ' + currentUser.firstName" 
             icon="pi pi-user" 
             (click)="menu.toggle($event)" 
             styleClass="p-button-text text-black"
         ></p-button>
-        <p-menu #menu [model]="userMenuItems" [popup]="true"></p-menu>
+        <p-menu #menu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+
+        <!-- Notification Inbox Overlay -->
+        <p-overlayPanel #op [style]="{width: '350px'}" appendTo="body">
+            <ng-template pTemplate="content">
+                <div class="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+                    <div class="flex justify-between items-center border-b pb-2 mb-2">
+                        <span class="font-bold text-lg">Notifications</span>
+                        <span class="text-sm text-blue-500 cursor-pointer" *ngIf="unreadCount > 0" (click)="loadNotifications()">Refresh</span>
+                    </div>
+                    <div *ngIf="notifications.length === 0" class="text-center py-4 text-gray-500">
+                        No notifications yet.
+                    </div>
+                    <div *ngFor="let notif of notifications" 
+                         class="p-3 rounded-md hover:bg-gray-50 cursor-pointer border-b last:border-0"
+                         [ngClass]="{'bg-blue-50': !notif.isRead}"
+                         (click)="markAsRead(notif)">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-sm" [ngClass]="{'font-semibold': !notif.isRead}">{{notif.message}}</span>
+                            <span class="text-xs text-gray-400">{{notif.createdAt | date:'short'}}</span>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </p-overlayPanel>
     </div>
   </ng-container>
   <ng-template #guestTemplate>
@@ -40,3 +70,20 @@
 <app-coming-soon-dialog
   [(visible)]="comingSoonDialogVisible"
 ></app-coming-soon-dialog>
+
+<p-dialog 
+    [(visible)]="displayNotificationDialog" 
+    [header]="'Notification Details'" 
+    [modal]="true" 
+    [style]="{width: '400px'}"
+    [draggable]="false" 
+    [resizable]="false">
+    <div *ngIf="selectedNotification" class="flex flex-col gap-4">
+        <div class="text-base">{{selectedNotification.message}}</div>
+        <div class="text-xs text-gray-400 text-right">{{selectedNotification.createdAt | date:'medium'}}</div>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button label="View" (click)="navigateToRelatedEntity()" styleClass="p-button-text"></p-button>
+        <p-button label="Close" (click)="displayNotificationDialog = false" styleClass="p-button-text"></p-button>
+    </ng-template>
+</p-dialog>
