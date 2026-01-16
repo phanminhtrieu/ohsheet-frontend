@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Endpoints, Methods } from 'app/enums/api';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
 import { Router } from '@angular/router';
 
@@ -28,7 +28,30 @@ export class AuthService {
     public signIn(payload: any): Observable<any> {
         return this.apiService.request(Endpoints.AUTH_SIGN_IN, Methods.POST, {
             body: payload
-        });
+        }).pipe(
+            tap((res: any) => {
+                if (res.isSucceeded) {
+                    this.setCurrentUser(res.resultObj);
+                    this.localStorageService.setItem('refreshToken', res.resultObj.refreshToken);
+                }
+            })
+        );
+    }
+
+    public refreshToken(): Observable<any> {
+        const refreshToken = this.localStorageService.getItem('refreshToken');
+        return this.apiService.request(Endpoints.AUTH_REFRESH_TOKEN, Methods.POST, {
+            body: { refreshToken: refreshToken }
+        }).pipe(
+            tap((res: any) => {
+                if (res.isSucceeded) {
+                    this.setCurrentUser(res.resultObj);
+                    this.localStorageService.setItem('refreshToken', res.resultObj.refreshToken);
+                } else {
+                    this.logout();
+                }
+            })
+        );
     }
 
     public setCurrentUser(user: any): void {
@@ -50,6 +73,7 @@ export class AuthService {
 
     private clearLocalUser(): void {
         this.localStorageService.removeItem('user');
+        this.localStorageService.removeItem('refreshToken');
         this.currentUser$.next(null);
         this.router.navigate(['/']);
     }
