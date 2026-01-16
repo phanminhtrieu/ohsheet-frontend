@@ -15,7 +15,7 @@
     <!-- Content -->
     <div class="space-y-3">
       <!-- Title -->
-      <h3 class="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[3.5rem]">
+      <h3 class="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[2.5rem]">
         {{ musicSheet.title }}
       </h3>
 
@@ -58,6 +58,16 @@
       <!-- Modified Date -->
       <div class="text-xs text-gray-400">
         Updated {{ formatDate(musicSheet.modifiedDate) }}
+      </div>
+
+      <!-- Tags -->
+      <div class="flex flex-wrap gap-1 mt-2" *ngIf="musicSheet.tags && musicSheet.tags.length > 0">
+        <span *ngFor="let tag of musicSheet.tags.slice(0, 3)" class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+            {{ tag }}
+        </span>
+        <span *ngIf="musicSheet.tags.length > 3" class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+            +{{ musicSheet.tags.length - 3 }}
+        </span>
       </div>
     </div>
   </p-card>

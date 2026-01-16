@@ -9,6 +9,9 @@ import { SearchInputComponent } from './components/search-input/search-input.com
 import { MusicSheetCardComponent } from './components/music-sheet-card/music-sheet-card.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagInputComponent } from 'app/shared/components/tag-input/tag-input.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-music-sheet-list',
@@ -18,7 +21,10 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
         SearchInputComponent,
         MusicSheetCardComponent,
         PaginatorModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        TagInputComponent,
+        DropdownModule,
+        FormsModule
     ],
     templateUrl: './music-sheet-list.component.html',
     styleUrl: './music-sheet-list.component.scss'
@@ -35,8 +41,17 @@ export class MusicSheetListComponent implements OnInit, OnDestroy {
         pageIndex: 1,
         pageSize: 10,
         textSearch: '',
-        searchBy: undefined
+        searchBy: undefined,
+        filterBy: 'newest',
+        tags: []
     };
+
+    public filterOptions = [
+        { label: 'Newest', value: 'newest' },
+        { label: 'Top Liked', value: 'top_like' },
+        { label: 'Hot This Week', value: 'hot_week' },
+        { label: 'Hot This Month', value: 'hot_month' }
+    ];
 
     constructor(
         private readonly musicSheetService: MusicSheetService,
@@ -108,6 +123,17 @@ export class MusicSheetListComponent implements OnInit, OnDestroy {
         this.filters.pageIndex = event.page + 1; // PrimeNG paginator is 0-indexed
         this.filters.pageSize = event.rows;
 
+        this.filterChange$.next({ ...this.filters });
+    }
+
+    public onFilterByChange(): void {
+        this.filters.pageIndex = 1;
+        this.filterChange$.next({ ...this.filters });
+    }
+
+    public onTagsChange(tags: string[]): void {
+        this.filters.tags = tags;
+        this.filters.pageIndex = 1;
         this.filterChange$.next({ ...this.filters });
     }
 }

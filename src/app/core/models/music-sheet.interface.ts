@@ -36,4 +36,6 @@ export interface MusicSheetPagingRequest {
     orderCol?: string;
     orderDir?: string;
     languageId?: number;
+    filterBy?: string;
+    tags?: string[];
 }
