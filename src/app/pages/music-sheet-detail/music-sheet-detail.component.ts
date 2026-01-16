@@ -14,10 +14,18 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { finalize } from 'rxjs';
 
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormsModule } from '@angular/forms';
+import { ChipModule } from 'primeng/chip';
+
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TagInputComponent } from 'app/shared/components/tag-input/tag-input.component';
+
 @Component({
     selector: 'app-music-sheet-detail',
     standalone: true,
-    imports: [CommonModule, ButtonModule, ProgressSpinnerModule, SheetRendererComponent, CommentSectionComponent],
+    imports: [CommonModule, ButtonModule, ProgressSpinnerModule, SheetRendererComponent, CommentSectionComponent, DialogModule, InputTextModule, FormsModule, ChipModule, AutoCompleteModule, TagInputComponent],
     templateUrl: './music-sheet-detail.component.html',
     styleUrls: ['./music-sheet-detail.component.scss']
 })
@@ -139,6 +147,51 @@ export class MusicSheetDetailComponent extends BaseComponent implements OnInit, 
 
     scrollToSheet(): void {
         this.sheetSection?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Edit Logic
+    showEditDialog: boolean = false;
+    editTitle: string = '';
+    editDescription: string = '';
+    editTags: string[] = [];
+
+    get isOwner(): boolean {
+        return this.currentUserId != null && this.musicSheet != null && this.musicSheet.userId === this.currentUserId;
+    }
+
+    openEditDialog() {
+        if (!this.musicSheet) return;
+        this.editTitle = this.musicSheet.title;
+        this.editDescription = this.musicSheet.description || '';
+        this.editTags = [...(this.musicSheet.tags || [])];
+        this.showEditDialog = true;
+    }
+
+    saveChanges() {
+        if (!this.musicSheet || !this.currentUserId) return;
+
+        this.musicSheetService.updateMusicSheet(
+            this.musicSheet.id,
+            this.currentUserId,
+            this.editTitle,
+            this.editDescription,
+            this.editTags
+        ).subscribe({
+            next: (res) => {
+                if (res.isSucceeded) {
+                    this.notificationService.showSuccessNotificatoin('Music sheet updated successfully');
+                    this.showEditDialog = false;
+                    // Reload to reflect changes (or update local model)
+                    this.loadMusicSheet(this.musicSheet!.id);
+                } else {
+                    this.notificationService.showErrorNotification(res.message || 'Failed to update music sheet');
+                }
+            },
+            error: (err) => {
+                console.error('Update failed', err);
+                this.notificationService.showErrorNotification('An error occurred while updating');
+            }
+        });
     }
 
     ngOnDestroy(): void {

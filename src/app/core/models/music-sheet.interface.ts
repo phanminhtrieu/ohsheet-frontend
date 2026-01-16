@@ -25,6 +25,7 @@ export interface MusicSheet {
     musicSheetUIState?: {
         isLiked: boolean;
     };
+    tags?: string[];
 }
 
 export interface MusicSheetPagingRequest {

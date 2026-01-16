@@ -180,6 +180,12 @@
         <textarea pInputText id="description" class="flex-auto" autocomplete="off" [(ngModel)]="description" rows="5"></textarea>
     </div>
     <div class="flex items-center gap-4 mb-8">
+        <label for="tags" class="font-semibold w-24">Tags</label>
+        <div class="flex-auto flex flex-col gap-2">
+            <app-tag-input [(tags)]="tags" inputId="tags" placeholder="Nhập tags (Enter để thêm)"></app-tag-input>
+        </div>
+    </div>
+    <div class="flex items-center gap-4 mb-8">
         <label for="thumbnail" class="font-semibold w-24">Thumbnail</label>
         <div class="flex-auto">
             <p-fileupload

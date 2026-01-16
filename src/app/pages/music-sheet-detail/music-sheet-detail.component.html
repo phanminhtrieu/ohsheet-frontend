@@ -30,7 +30,10 @@
             >
             <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end">
               <div class="p-8 text-white w-full">
-                <h1 class="text-4xl font-bold mb-2">{{ musicSheet.title }}</h1>
+                <div class="flex items-center gap-2 mb-2">
+                  <h1 class="text-4xl font-bold">{{ musicSheet.title }}</h1>
+                  <i *ngIf="isOwner" class="pi pi-pencil text-white cursor-pointer hover:text-gray-300" (click)="openEditDialog()"></i>
+                </div>
                 <div class="flex items-center space-x-4">
                   <div class="flex items-center space-x-2">
                     <img 
@@ -53,10 +56,29 @@
               <!-- Main Info -->
               <div class="lg:col-span-2 space-y-6">
                 <div>
-                  <h2 class="text-xl font-semibold mb-3">Description</h2>
+                  <div class="flex items-center gap-2 mb-3">
+                    <h2 class="text-xl font-semibold">Description</h2>
+                    <i *ngIf="isOwner" class="pi pi-pencil text-gray-500 cursor-pointer hover:text-gray-700" (click)="openEditDialog()"></i>
+                  </div>
                   <p class="text-gray-600 leading-relaxed">
                     {{ musicSheet.description || 'No description provided.' }}
                   </p>
+                </div>
+
+                <!-- Tags -->
+                <div *ngIf="musicSheet.tags && musicSheet.tags.length > 0 || isOwner">
+                  <div class="flex items-center gap-2 mb-3">
+                    <h2 class="text-xl font-semibold">Tags</h2>
+                    <i *ngIf="isOwner" class="pi pi-pencil text-gray-500 cursor-pointer hover:text-gray-700" (click)="openEditDialog()"></i>
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span 
+                      *ngFor="let tag of musicSheet.tags || []" 
+                      class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium"
+                    >
+                      {{ tag }}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -103,13 +125,35 @@
           <h2 class="text-2xl font-semibold mb-6 text-white">Sheet Music</h2>
           <div class="bg-white rounded-lg p-6">
             <app-sheet-renderer 
-              [transcriptionId]="musicSheet!.transcriptionId"
+              [transcriptionId]="musicSheet.transcriptionId"
               [notesPerLine]="16"
               [sheetWidth]="850"
             ></app-sheet-renderer>
           </div>
         </div>
       </div>
+
+      <!-- Edit Dialog -->
+      <p-dialog header="Edit Music Sheet" [(visible)]="showEditDialog" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
+                <label for="editTitle" class="font-semibold">Title</label>
+                <input pInputText id="editTitle" [(ngModel)]="editTitle" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="editDescription" class="font-semibold">Description</label>
+                <textarea pInputText id="editDescription" [(ngModel)]="editDescription" rows="5" class="w-full p-2 border rounded"></textarea>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="editTags" class="font-semibold">Tags</label>
+                <app-tag-input [(tags)]="editTags" inputId="editTags"></app-tag-input>
+            </div>
+        </div>
+        <ng-template pTemplate="footer">
+            <p-button label="Cancel" icon="pi pi-times" (onClick)="showEditDialog = false" styleClass="p-button-text"></p-button>
+            <p-button label="Save" icon="pi pi-check" (onClick)="saveChanges()" styleClass="p-button-text"></p-button>
+        </ng-template>
+      </p-dialog>
       
       <!-- Comment Section -->
       <app-comment-section [sheetId]="musicSheet.id"></app-comment-section>

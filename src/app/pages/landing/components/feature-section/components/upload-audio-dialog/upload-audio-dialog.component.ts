@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { StepperModule } from 'primeng/stepper';
 import { InputTextModule } from 'primeng/inputtext';
+import { ChipModule } from 'primeng/chip';
 
 import { SheetRendererComponent } from 'app/shared/components/sheet-renderer/sheet-renderer.component';
 import { MusicSheetTranscriptionService } from 'app/core/services/music-sheet-transcription.service';
@@ -14,6 +15,7 @@ import { MusicSheetService } from 'app/core/services/music-sheet.service';
 import { LocalStorageService } from 'app/core/services/local-storage.service';
 import { finalize } from 'rxjs';
 import { LocalHostConstant } from 'app/shared/constants';
+import { TagInputComponent } from 'app/shared/components/tag-input/tag-input.component';
 
 interface UploadedFile {
   name: string;
@@ -32,7 +34,9 @@ interface UploadedFile {
     StepperModule,
     SheetRendererComponent,
     InputTextModule,
-    FormsModule
+    FormsModule,
+    ChipModule,
+    TagInputComponent
   ],
   templateUrl: './upload-audio-dialog.component.html',
   styleUrl: './upload-audio-dialog.component.scss'
@@ -142,6 +146,8 @@ export class UploadAudioDialogComponent {
   thumbnailFile: File | null = null;
   thumbnailPreviewUrl: string | ArrayBuffer | null = null;
 
+  tags: string[] = [];
+
   openSaveDialog() {
     this.showSaveDialog = true;
   }
@@ -167,7 +173,7 @@ export class UploadAudioDialogComponent {
     const transcriptionId = this.localStorageService.getItem(LocalHostConstant.TRANSCRIPTION_ID);
 
     if (transcriptionId) {
-      this.musicSheetService.createMusicSheet(userId, this.title, this.description, transcriptionId, this.thumbnailFile)
+      this.musicSheetService.createMusicSheet(userId, this.title, this.description, transcriptionId, this.thumbnailFile, this.tags)
         .subscribe({
           next: (res) => {
             this.showSaveDialog = false;
