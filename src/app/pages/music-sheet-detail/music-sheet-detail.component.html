@@ -134,8 +134,8 @@
       </div>
 
       <!-- Edit Dialog -->
-      <p-dialog header="Edit Music Sheet" [(visible)]="showEditDialog" [modal]="true" [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
-        <div class="flex flex-col gap-4">
+      <p-dialog header="Edit Music Sheet" [(visible)]="showEditDialog" [modal]="true" [style]="{width: '50vw', height: '80vh'}" [draggable]="false" [resizable]="false">
+        <div class="flex flex-col gap-4 mb-[100px]">
             <div class="flex flex-col gap-2">
                 <label for="editTitle" class="font-semibold">Title</label>
                 <input pInputText id="editTitle" [(ngModel)]="editTitle" />

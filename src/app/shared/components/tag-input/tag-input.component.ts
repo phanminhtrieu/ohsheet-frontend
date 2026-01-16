@@ -24,6 +24,7 @@ import { MusicSheetService } from 'app/core/services/music-sheet.service';
             [inputId]="inputId"
             styleClass="w-full"
             inputStyleClass="w-full"
+            appendTo="body"
         ></p-autoComplete>
         <div class="flex flex-wrap gap-2 mt-2" *ngIf="tags.length > 0">
             <p-chip *ngFor="let tag of tags; let i = index" [label]="tag" [removable]="true" (onRemove)="removeTag(i)"></p-chip>
